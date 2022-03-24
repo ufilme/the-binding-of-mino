@@ -20,7 +20,9 @@ void print_map(int col, int row, int h_x, int h_y, int e_x, int e_y, bool e_a)
             }
             else if(x == h_x && y == h_y)
             {
-                addch('@');
+                printw("\U0001F52B");
+                move(y,x+1);
+                printw("\U0001F920");
             }
             else
                 addch(' ');

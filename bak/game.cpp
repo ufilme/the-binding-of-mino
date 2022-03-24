@@ -1,83 +1,85 @@
+using namespace std;
 #include <ncurses.h>
-#include "library.h"
 #include <ctime>
 #include <chrono>
-using namespace std;
+#include <locale>
+#include <clocale>
+#include "src/includes/includes.h"
 
-class projectile
-{
-    protected:
-        int x, y;
-        char dir;
-    public:
-        projectile(int px, int py, char d)
-        {
-            x = px;
-            y = py;
-            dir = d;
-        };
-        int xaxis(int s)
-        {
-            if(s == 0)
-                x--;
-            else if(s == 1)
-                x++;
-            return x;
-        };
-        int yaxis(int s)
-        {
-            if(s == 0)
-                y--;
-            else if(s == 1)
-                y++;
-            return y;
-        };
-        int direc()
-        {
-            return dir;
-        };
-};
+// class projectile
+// {
+//     protected:
+//         int x, y;
+//         char dir;
+//     public:
+//         projectile(int px, int py, char d)
+//         {
+//             x = px;
+//             y = py;
+//             dir = d;
+//         };
+//         int xaxis(int s)
+//         {
+//             if(s == 0)
+//                 x--;
+//             else if(s == 1)
+//                 x++;
+//             return x;
+//         };
+//         int yaxis(int s)
+//         {
+//             if(s == 0)
+//                 y--;
+//             else if(s == 1)
+//                 y++;
+//             return y;
+//         };
+//         int direc()
+//         {
+//             return dir;
+//         };
+// };
 
-class entity
-{
-    protected:
-        int health;
-        int x;
-        int y;
+// class entity
+// {
+//     protected:
+//         int health;
+//         int x;
+//         int y;
 
-    public:
-        entity(int h, int row, int col)
-        {
-            health = h;
-            x = col;
-            y = row;
-        };
-        bool got_hit()
-        {
-            health--;
-            return health;
-        };
-        int life()
-        {
-            return health;
-        };
-        int xaxis(int s)
-        {
-            if(s == 0)
-                x--;
-            else if(s == 1)
-                x++;
-            return x;
-        };
-        int yaxis(int s)
-        {
-            if(s == 0)
-                y--;
-            else if(s == 1)
-                y++;
-            return y;
-        };
-};
+//     public:
+//         entity(int h, int row, int col)
+//         {
+//             health = h;
+//             x = col;
+//             y = row;
+//         };
+//         bool got_hit()
+//         {
+//             health--;
+//             return health;
+//         };
+//         int life()
+//         {
+//             return health;
+//         };
+//         int xaxis(int s)
+//         {
+//             if(s == 0)
+//                 x--;
+//             else if(s == 1)
+//                 x++;
+//             return x;
+//         };
+//         int yaxis(int s)
+//         {
+//             if(s == 0)
+//                 y--;
+//             else if(s == 1)
+//                 y++;
+//             return y;
+//         };
+// };
 
 class hero: public entity
 {
@@ -133,9 +135,10 @@ class enemy: public entity
 
 int main()
 {
+    setlocale(LC_ALL, "");
     bool game_over = false, esc = false, proj = false;
     projectile p = projectile(0, 0, '0');
-    char user = '0';
+    int user = 0;
     int row, col;
     auto t = chrono::steady_clock::now();
     initscr();
@@ -205,42 +208,43 @@ int main()
                 proj = false;
         }
         user = getch();
-        if(user == 'i' || user == 'j' || user == 'k' || user == 'l')
+        // if(user == 'i' || user == 'j' || user == 'k' || user == 'l')
+        // {
+        //     if(!proj)
+        //     {
+        //         //t = time(0);
+        //         t = chrono::steady_clock::now();
+        //         p = me.shoot(user);
+        //         proj = true;
+        //     }
+        // }
+        printw("%d", user);
+        if (true)
         {
-            if(!proj)
+            switch(getch())
             {
-                //t = time(0);
-                t = chrono::steady_clock::now();
-                p = me.shoot(user);
-                proj = true;
-            }
-        }
-        else
-        {
-            switch(user)
-            {
-                case 'q':
+                case 42:
                     esc = true;
                     break;
-                case 'w':
+                case 65:
                     if(me.yaxis(-1) > 1)
                         me.yaxis(0);
                     else
                         game_over = true;
                     break;
-                case 'a':
+                case 68:
                     if(me.xaxis(-1) > 1)
                         me.xaxis(0);
                     else
                         game_over = true;
                     break;
-                case 's':
+                case 66:
                     if(me.yaxis(-1) < (row-2))
                         me.yaxis(1);
                     else
                         game_over = true;
                     break;
-                case 'd':
+                case 67:
                     if(me.xaxis(-1) < (col-2))
                         me.xaxis(1);
                     else
