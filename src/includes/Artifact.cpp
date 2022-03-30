@@ -11,89 +11,64 @@
         -1          max
         k           quel che l'è
 */
-#include <string>
-using namespace std;
+#include "Artifact.hpp"
 
-class Artifact{
-    protected:
-        int type;
-        int increment;
-        int duration;
-        string story;
-        string owner;
-    public:
-        int _getType(){
-            return this->type;
-        };
-        int _getIncrement(){
-            return this->increment;
-        };
-        int _getDuration(){
-            return this->duration;
-        }
-        string _getStory(){
-            return this->story;
-        };
-        string _getOwner(){
-            return this->owner;
-        };
+int Artifact::_getType(){
+    return this->type;
+};
+int Artifact::_getIncrement(){
+    return this->increment;
+};
+int Artifact::_getDuration(){
+    return this->duration;
+};
+string Artifact::_getStory(){
+    return this->story;
+};
+string Artifact::_getOwner(){
+    return this->owner;
 };
 
 //storia del caffe, memino di claudio
-class Kaffe: public Artifact{
-    public:
-        Kaffe(){
-            this->owner = "Tutor";
-            this->story = "";
-            this->type = 3;
-            this->increment = 1;
-            this->duration = 30;
-        };
+Kaffe::Kaffe(){
+    this->owner = "Tutor";
+    this->story = "";
+    this->type = 3;
+    this->increment = 1;
+    this->duration = 30;
 };
 
 //Sacra la pausa
-class Pause: public Artifact{
-    public:
-        Pause(){
-            this->owner = "Prof";
-            this->story = "";
-            this->type = 1;
-            this->increment = 1;
-            this->duration = -1;
-        };
+Pause::Pause(){
+    this->owner = "Prof";
+    this->story = "";
+    this->type = 1;
+    this->increment = 1;
+    this->duration = -1;
 };
 
 //storia Amir
 //aumenta il danno. all'inizio sei una pippa
-class NAND: public Artifact{
-    public:
-        NAND(){
-            this->owner = "Tutor";
-            this->story = "";
-            this->type = 2;
-            this->increment = 1;
-            this->duration = 30;
-        };
+NAND::NAND(){
+    this->owner = "Tutor";
+    this->story = "";
+    this->type = 2;
+    this->increment = 1;
+    this->duration = 30;
 };
 
-class CFU: public Artifact{
-    public:
-        CFU(){
-            this->owner = "Unibo";
-            this->story = "";
-            this->type = 0;
-            this->increment = -1;
-            this->duration = 120;
-        };
+CFU::CFU(){
+    this->owner = "Unibo";
+    this->story = "";
+    this->type = 0;
+    this->increment = -1;
+    this->duration = 120;
 };
 
-class Kebab: public Artifact{
-    public:
-        Kebab(){
-            this->owner = "Franco";
-            this->story = "";
-            this->type = 1;
-            this->increment = 3;
-            this->duration = -1;
-        };
+Kebab::Kebab(){
+    this->owner = "Franco";
+    this->story = "";
+    this->type = 1;
+    this->increment = 3;
+    this->duration = -1;
 };
