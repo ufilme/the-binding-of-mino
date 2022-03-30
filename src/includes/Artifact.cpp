@@ -7,7 +7,9 @@
     BIO
         - story
         - owner
-    
+    increment
+        -1          max
+        k           quel che l'è
 */
 #include <string>
 using namespace std;
@@ -82,5 +84,16 @@ class CFU: public Artifact{
             this->type = 0;
             this->increment = -1;
             this->duration = 120;
+        };
+};
+
+class Kebab: public Artifact{
+    public:
+        Kebab(){
+            this->owner = "Franco";
+            this->story = "";
+            this->type = 1;
+            this->increment = 3;
+            this->duration = -1;
         };
 };
