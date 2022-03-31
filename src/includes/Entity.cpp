@@ -24,12 +24,15 @@ int Entity::_getSpeed(){
 };
 int Entity::_setHealth(int k){
     this->health += k;
+    return this->health;
 };
 int Entity::_setPower(int k){
     this->power += k;
+    return this->power;
 };
 int Entity::_setSpeed(int k){
     this->speed += k;
+    return this->speed;
 };
 int Entity::gotHit(){
     health--;
@@ -50,6 +53,7 @@ int Player::_setHealth(int k){
     Entity::_setHealth(k);
     if(this->health > this->max_health)
         this->health = this->max_health;
+    return this->health;
 };
 
 Priest::Priest(int x, int y) : Entity(x, y){
