@@ -1,6 +1,10 @@
 #include <string>
-#include <tuple>
 using namespace std;
+
+struct int_tuple{
+    int x;
+    int y;
+};
 
 /*
     type:
@@ -18,7 +22,7 @@ class Entity{
         string sprite;
     public:
         Entity(int x, int y);
-        tuple<int, int> _getCoord();
+        int_tuple _getCoord();
         int _getHealth();
         int _getPower();
         int _getSpeed();
@@ -35,17 +39,14 @@ class Player: public Entity{
         int max_speed;
     public:
         Player(int x, int y);
-        int _setHealth(int k);
 };
 
 class Priest: public Entity{
-    protected:
     public:
         Priest(int x, int y);
 };
 
 class Test: public Entity{
-    protected:
     public:
         Test(int x, int y);
 };

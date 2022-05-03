@@ -22,6 +22,7 @@ class Artifact{
         string story;
         string owner;
     public:
+        Artifact();
         int _getType();
         int _getIncrement();
         int _getDuration();
