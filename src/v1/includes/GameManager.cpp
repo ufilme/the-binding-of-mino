@@ -1,5 +1,4 @@
 #include "GameManager.hpp"
-#include <ncurses.h>
 using namespace std;
 
 struct mapList{
@@ -75,7 +74,3 @@ void GameManager::update(Map map){
 };
 void GameManager::update_screen(Map map){
 };
-
-int main(){
-    return 0;
-}

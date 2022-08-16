@@ -1,10 +1,9 @@
-#include "includes/GameManager.cpp"
+#include "includes/GameManager.hpp"
 
-int main()
-{
+int main(){
     GameManager GAME = GameManager(true);
 
     GAME.start();
 
-    return 0;
+    return(0);
 }
