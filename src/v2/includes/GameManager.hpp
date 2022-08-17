@@ -10,7 +10,7 @@ class GameManager{
     public:
         GameManager(bool active);
         void intro();
-        void start();
+        void start(Window WIN);
         void update(Window WIN);
         void update_screen(Window WIN);
 };
