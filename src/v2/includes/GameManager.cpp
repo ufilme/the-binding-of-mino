@@ -3,7 +3,7 @@
 using namespace std;
 
 GameManager::GameManager(bool active){
-    active = this->active;
+    this->active = active;
 };
 
 void GameManager::start(){
