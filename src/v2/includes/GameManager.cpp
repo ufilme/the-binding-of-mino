@@ -15,35 +15,48 @@ void GameManager::start(Window MENU){
 void GameManager::intro(){
     MenuWindow MENU = MenuWindow();
     keypad(MENU.win, true);
-    int pos = 0;
-    while (this->input_ch != 127){
+    bool exit = false;
+    int pos = -1;
+    while (this->input_ch != 127 && !exit){
         if (this->input_ch == KEY_RESIZE){
             MENU.resize();
         }
         switch (this->input_ch){
             case 65:
-                if (pos != 0){
+                if (pos == -1)
+                    pos = 0;
+                else if (pos != 0){
                     pos--;
                     MENU.draw(pos);
                 }
                 break;
             case 66:
-                if (pos != 2){
+                if (pos == -1)
+                    pos = 0;
+                else if (pos != 2){
                     pos++;
                     MENU.draw(pos);
                 }
                 break;
             case 10:
-                if (pos == 0){
-                    this->input_ch = 0;
-                    this->start(MENU);
+                switch (pos){
+                    case 0:
+                        this->input_ch = 0;
+                        this->start(MENU);
+                        break;
+                    case 1:
+                        break;
+                    case 2:
+                        exit = true;
+                        break;
                 }
                 break;
         }
         // sovrscrivi metodo draw nel menuWindow e poi fai disegnare qua
         MENU.draw(pos);
         mvwprintw(MENU.win, 0, 0, "%d %d", pos, this->input_ch);
-        this->input_ch = wgetch(MENU.win);
+        if (!exit)
+            this->input_ch = wgetch(MENU.win);
     }
 }
 

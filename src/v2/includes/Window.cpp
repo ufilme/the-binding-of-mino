@@ -42,7 +42,38 @@ void Window::_delete(){
 
 void MenuWindow::draw(int pos){
     Window::draw();
-    
+
+    //switch pos
+    //highlights text
+
+    char choice1[] = "Gioca";
+    int length1 = sizeof(choice1) - 1;
+
+    char choice2[] = "Comandi";
+    int length2 = sizeof(choice2) - 1;
+
+    char choice3[] = "Esci";
+    int length3 = sizeof(choice3) - 1;
+
+    int x = max_w/2.50, y = (max_h/5.00);
+
+    mvwprintw(win, y, x - length1/2, choice1);
+    mvwprintw(win, 2*y, x - length2/2, choice2);
+    mvwprintw(win, 3*y, x - length3/2, choice3);
+
+    wattron(win, A_STANDOUT);
+    switch (pos){
+                    case 0:
+                        mvwprintw(win, y, x - length1/2, choice1);
+                        break;
+                    case 1:
+                        mvwprintw(win, 2*y, x - length2/2, choice2);
+                        break;
+                    case 2:
+                        mvwprintw(win, 3*y, x - length3/2, choice3);
+                        break;
+                }
+    wattroff(win, A_STANDOUT);
 }
 
 void MenuWindow::resize(){
@@ -57,5 +88,5 @@ void MenuWindow::resize(){
     box(win, 0, 0);
     char title[] = "> The Binding of Mino <";
     int length = sizeof(title) - 1;  // Discount the terminal '\0'
-    mvwprintw(win, 0, max_w/2.55 - length/2, title);
+    mvwprintw(win, 0, max_w/2.50 - length/2, title);
 }
