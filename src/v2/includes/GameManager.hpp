@@ -13,4 +13,5 @@ class GameManager{
         void start(Window WIN);
         void update(Window WIN);
         void update_screen(Window WIN);
+        void commands(MenuWindow MENU);
 };

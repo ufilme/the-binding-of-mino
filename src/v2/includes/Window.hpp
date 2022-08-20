@@ -22,4 +22,5 @@ class MenuWindow : public Window{
     public:
         void resize();
         void draw(int pos);
+        void cmd_draw(int pos);
 };
