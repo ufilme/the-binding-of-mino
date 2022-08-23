@@ -6,10 +6,11 @@ GameManager::GameManager(bool active){
     this->active = active;
 };
 
-void GameManager::start(Window MENU){
+void GameManager::start(MenuWindow MENU){
     MENU._delete();
     GameWindow GAME = GameWindow();
-    this->update(GAME);
+    Player P = Player(GAME.get_max_w()/2.5, GAME.get_max_h()/2.5, '@');
+    this->update(GAME, P);
 };
 
 void GameManager::intro(){
@@ -22,7 +23,7 @@ void GameManager::intro(){
             MENU.resize();
         }
         switch (this->input_ch){
-            case 65:
+            case KEY_UP:
                 if (pos == -1){
                     pos = 0;
                 }
@@ -30,7 +31,7 @@ void GameManager::intro(){
                     pos--;
                 }
                 break;
-            case 66:
+            case KEY_DOWN:
                 if (pos == -1){
                     pos = 0;
                 }
@@ -71,10 +72,10 @@ void GameManager::commands(MenuWindow MENU){
             MENU.resize();
         }
         switch (this->input_ch){
-            case 65:
+            case KEY_UP:
                 pos = 0;
                 break;
-            case 66:
+            case KEY_DOWN:
                 pos = 0;
                 break;
             case 10:
@@ -84,9 +85,10 @@ void GameManager::commands(MenuWindow MENU){
                 }
                 break;
         }
-        
+        werase(MENU.win);
         MENU.cmd_draw(pos);     //stampa il menu dei comandi
         mvwprintw(MENU.win, 0, 0, "%d %d", pos, this->input_ch);
+        wrefresh(MENU.win);
         if (!back)
             this->input_ch = wgetch(MENU.win);
     }
@@ -94,9 +96,29 @@ void GameManager::commands(MenuWindow MENU){
     wrefresh(MENU.win);
 }
 
-void GameManager::update(Window GAME){
+void GameManager::update(GameWindow GAME, Player P){
     while (this->input_ch != 127){
-        GAME.draw();
+        auto [x, y] = P.get_pos();
+        switch (this->input_ch){
+            case KEY_UP:
+                mvwprintw(GAME.win, 0, GAME.get_max_w()/1.25-2, "UP");
+                y--;
+                break;
+            case KEY_DOWN:
+                y++;
+                break;
+            case KEY_LEFT:
+                x--;
+                break;
+            case KEY_RIGHT:
+                x++;
+                break;
+        }
+        P.set_pos(x, y);
+        werase(GAME.win);
+        GAME.draw(P);
+        mvwprintw(GAME.win, 0, GAME.get_max_w()/1.25-2, "%d", this->input_ch);
+        wrefresh(GAME.win);
         this->input_ch = wgetch(GAME.win);
     }
 }

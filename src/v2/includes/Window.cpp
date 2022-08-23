@@ -11,10 +11,21 @@ Window::Window(){
     int max_h, max_w;
     getmaxyx(stdscr, max_h, max_w);
 
+    win = newwin(max_h/1.25, max_w/1.25, max_h/10, max_w/10);
+    keypad(win, TRUE);
+
     this->set_max_w(max_w);
     this->set_max_h(max_h);
 
     this->draw();
+}
+
+int Window::get_max_w(){
+    return max_w;
+}
+
+int Window::get_max_h(){
+    return max_h;
 }
 
 int Window::set_max_w(int w){
@@ -28,7 +39,6 @@ int Window::set_max_h(int h){
 }
 
 void Window::draw(){
-    win = newwin(max_h/1.25, max_w/1.25, max_h/10, max_w/10);
     box(win, 0, 0);
 
     char title[] = "> The Binding of Mino <";
@@ -38,6 +48,13 @@ void Window::draw(){
 
 void Window::_delete(){
     delwin(win);
+}
+
+void GameWindow::draw(Player P){
+    Window::draw();
+    auto [x,y] = P.get_pos();
+    mvwprintw(win, 0, 0, "x:%d y:%d", x, y);
+    mvwprintw(win, y, x, "@");
 }
 
 void MenuWindow::draw(int pos){
