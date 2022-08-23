@@ -14,6 +14,8 @@ Window::Window(){
     this->set_max_w(max_w);
     this->set_max_h(max_h);
 
+    win = newwin(max_h/1.25, max_w/1.25, max_h/10, max_w/10);
+
     this->draw();
 }
 
@@ -28,7 +30,6 @@ int Window::set_max_h(int h){
 }
 
 void Window::draw(){
-    win = newwin(max_h/1.25, max_w/1.25, max_h/10, max_w/10);
     box(win, 0, 0);
 
     char title[] = "> The Binding of Mino <";
