@@ -15,9 +15,8 @@ void GameManager::start(MenuWindow MENU){
 
 void GameManager::intro(){
     MenuWindow MENU = MenuWindow();
-    keypad(MENU.win, true);
     bool exit = false;
-    int pos = -1;
+    int pos = 0;
     while (this->input_ch != 127 && !exit){
         if (this->input_ch == KEY_RESIZE){
             MENU.resize();
@@ -101,23 +100,26 @@ void GameManager::update(GameWindow GAME, Player P){
         auto [x, y] = P.get_pos();
         switch (this->input_ch){
             case KEY_UP:
-                mvwprintw(GAME.win, 0, GAME.get_max_w()/1.25-2, "UP");
-                y--;
+                if (y > 1)
+                    y--;
                 break;
             case KEY_DOWN:
-                y++;
+                if (y < GAME.get_max_h() / 1.35)
+                    y++;
                 break;
             case KEY_LEFT:
-                x--;
+                if (x > 1)
+                    x--;
                 break;
             case KEY_RIGHT:
-                x++;
+                if (x < GAME.get_max_w() / 1.35)
+                    x++;
                 break;
         }
         P.set_pos(x, y);
         werase(GAME.win);
         GAME.draw(P);
-        mvwprintw(GAME.win, 0, GAME.get_max_w()/1.25-2, "%d", this->input_ch);
+        mvwprintw(GAME.win, 0, GAME.get_max_w()/1.25 - 3, "%d", this->input_ch);
         wrefresh(GAME.win);
         this->input_ch = wgetch(GAME.win);
     }

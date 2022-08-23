@@ -18,14 +18,14 @@ class Window{
 class GameWindow : public Window{
     protected:
     public:
-        GameWindow();
+        GameWindow() : Window(){};
         void draw(Player P);
 };
 
 class MenuWindow : public Window{
     protected:
     public:
-        MenuWindow();
+        MenuWindow() : Window(){};
         void resize();
         void draw(int pos);
         void cmd_draw(int pos);
