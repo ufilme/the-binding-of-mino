@@ -7,7 +7,6 @@ GameManager::GameManager(bool active){
 };
 
 void GameManager::start(MenuWindow MENU){
-    MENU._delete();
     GameWindow GAME = GameWindow();
     Player P = Player(GAME.get_max_w()/2.5, GAME.get_max_h()/2.5, '@');
     this->update(GAME, P);
@@ -17,7 +16,7 @@ void GameManager::intro(){
     MenuWindow MENU = MenuWindow();
     bool exit = false;
     int pos = 0;
-    while (this->input_ch != 127 && !exit){
+    while ((this->input_ch != 127 && this->input_ch != KEY_BACKSPACE) && !exit){
         if (this->input_ch == KEY_RESIZE){
             MENU.resize();
         }
@@ -38,6 +37,24 @@ void GameManager::intro(){
                     pos++;
                 }
                 break;
+
+            case 65:
+                if (pos == -1){
+                    pos = 0;
+                }
+                else if (pos != 0){
+                    pos--;
+                }
+                break;
+            case 66:
+                if (pos == -1){
+                    pos = 0;
+                }
+                else if (pos != 2){
+                    pos++;
+                }
+                break;
+
             case 10:
                 switch (pos){
                     case 0:
@@ -66,7 +83,7 @@ void GameManager::intro(){
 void GameManager::commands(MenuWindow MENU){
     bool back = false;
     int pos = -1;
-    while (this->input_ch != 127 && !back){
+    while ((this->input_ch != 127 && this->input_ch != KEY_BACKSPACE) && !back){
         if (this->input_ch == KEY_RESIZE){
             MENU.resize();
         }
@@ -75,6 +92,13 @@ void GameManager::commands(MenuWindow MENU){
                 pos = 0;
                 break;
             case KEY_DOWN:
+                pos = 0;
+                break;
+
+            case 65:
+                pos = 0;
+                break;
+            case 66:
                 pos = 0;
                 break;
             case 10:
@@ -96,15 +120,17 @@ void GameManager::commands(MenuWindow MENU){
 }
 
 void GameManager::update(GameWindow GAME, Player P){
-    while (this->input_ch != 127){
+    while (this->input_ch != 127 && this->input_ch != KEY_BACKSPACE){
         auto [x, y] = P.get_pos();
+        int max_y, max_x;
+        getmaxyx(GAME.win, max_y, max_x);
         switch (this->input_ch){
             case KEY_UP:
                 if (y > 1)
                     y--;
                 break;
             case KEY_DOWN:
-                if (y < GAME.get_max_h() / 1.35)
+                if (y < max_y - 2)
                     y++;
                 break;
             case KEY_LEFT:
@@ -112,7 +138,24 @@ void GameManager::update(GameWindow GAME, Player P){
                     x--;
                 break;
             case KEY_RIGHT:
-                if (x < GAME.get_max_w() / 1.35)
+                if (x < max_x - 2)
+                    x++;
+                break;
+
+            case 65:
+                if (y > 1)
+                    y--;
+                break;
+            case 66:
+                if (y < max_y - 2)
+                    y++;
+                break;
+            case 68:
+                if (x > 1)
+                    x--;
+                break;
+            case 67:
+                if (x < max_x - 2)
                     x++;
                 break;
         }
