@@ -10,14 +10,14 @@ Window::Window(){
 
     int max_h, max_w;
     getmaxyx(stdscr, max_h, max_w);
+    this->offset_h = (max_h - max_h/1.25)/2;
+    this->offset_w = (max_w - max_w/1.25)/2;
 
-    win = newwin(max_h/1.25, max_w/1.25, max_h/10, max_w/10);
+    win = newwin(max_h/1.25, max_w/1.25, this->offset_h, this->offset_w);
     keypad(win, TRUE);
 
     this->set_max_w(max_w);
     this->set_max_h(max_h);
-
-    win = newwin(max_h/1.25, max_w/1.25, max_h/10, max_w/10);
 
     this->draw();
 }
@@ -40,6 +40,24 @@ int Window::set_max_h(int h){
     return max_h;
 }
 
+int Window::get_offset_w(){
+    return offset_w;
+}
+
+int Window::get_offset_h(){
+    return offset_h;
+}
+
+int Window::set_offset_w(int w){
+    offset_w = w;
+    return offset_w;
+}
+
+int Window::set_offset_h(int h){
+    offset_h = h;
+    return offset_h;
+}
+
 void Window::draw(){
     box(win, 0, 0);
 
@@ -52,11 +70,58 @@ void Window::_delete(){
     delwin(win);
 }
 
-void GameWindow::draw(Player P){
-    Window::draw();
+GameWindow::GameWindow(MenuWindow MENU){
+    Window();       //chiama costruttore classe madre, poi reinizializza win
+    delwin(win);
+
+    int max_h, max_w;
+    getmaxyx(MENU.win, max_h, max_w);
+    this->offset_h = (max_h - max_h/1.25)/2 + MENU.get_offset_h();
+    this->offset_w = (max_w - max_w/1.25)/2 + MENU.get_offset_w();
+
+    win = newwin(max_h/1.25, max_w/1.25, this->offset_h, this->offset_w);
+    keypad(win, TRUE);
+
+    this->set_max_w(max_w);
+    this->set_max_h(max_h);
+}
+
+void GameWindow::draw(Player P, w wall1, w wall2){
+    box(win, 0, 0);
     auto [x,y] = P.get_pos();
-    mvwprintw(win, 0, 0, "x:%d y:%d", x, y);
+    mvwprintw(win, 0, 0, "y:%d x:%d", y, x);
     mvwprintw(win, y, x, "@");
+
+    //stampa le 4 porte
+    int max_y, max_x;
+    getmaxyx(win, max_y, max_x);
+
+    mvwprintw(win, max_y/2 - 1, 0, " ");            //porta sx
+    mvwprintw(win, max_y/2, 0, " ");
+
+    mvwprintw(win, max_y/2 - 1, max_x - 1, " ");    //porta dx
+    mvwprintw(win, max_y/2, max_x - 1, " ");
+
+    mvwprintw(win, 0, max_x/2 - 2, "    ");         //porta up
+
+    mvwprintw(win, max_y - 1, max_x/2 - 2, "    "); //porta down
+
+    //stampa i muri
+    for (int i = wall1.start; i <= wall1.end; i++)
+    {
+        if (wall1.horizontal)
+            mvwprintw(win, wall1.axis, i, "-");
+        else
+            mvwprintw(win, i, wall1.axis, "|");
+    }
+
+    for (int i = wall2.start; i <= wall2.end; i++)
+    {
+        if (wall2.horizontal)
+            mvwprintw(win, wall2.axis, i, "-");
+        else
+            mvwprintw(win, i, wall2.axis, "|");
+    }
 }
 
 void MenuWindow::draw(int pos){
