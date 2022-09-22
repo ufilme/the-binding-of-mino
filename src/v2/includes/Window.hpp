@@ -1,13 +1,6 @@
 #include <ncurses.h>
 #include "Entity.hpp"
 
-struct w{
-    int start;          //start == -1 -> ancora da inizializzare
-    int end;            //start == -2 -> muro assente
-    int axis;
-    bool horizontal;
-};
-
 class Window{
     protected:
         int max_w, max_h;
@@ -41,5 +34,5 @@ class GameWindow : public Window{
     public:
         //GameWindow() : Window(){};
         GameWindow(MenuWindow MENU);
-        void draw(Player P, w wall1, w wall2);
+        void draw(Player P, wall wall1, wall wall2);
 };

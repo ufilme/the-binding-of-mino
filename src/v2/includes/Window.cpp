@@ -86,7 +86,7 @@ GameWindow::GameWindow(MenuWindow MENU){
     this->set_max_h(max_h);
 }
 
-void GameWindow::draw(Player P, w wall1, w wall2){
+void GameWindow::draw(Player P, wall wall1, wall wall2){
     box(win, 0, 0);
     auto [x,y] = P.get_pos();
     mvwprintw(win, 0, 0, "y:%d x:%d", y, x);

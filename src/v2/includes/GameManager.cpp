@@ -117,11 +117,8 @@ void GameManager::commands(MenuWindow MENU){
 }
 
 void GameManager::update(GameWindow GAME, Player P){
-    //converte muri da struct di GameManager a struct di Window
-    w w1 = convert_wall(room->wall1);
-    w w2 = convert_wall(room->wall2);
 
-    GAME.draw(P, w1, w2);
+    GAME.draw(P, room->wall1, room->wall2);
     while (this->input_ch != 127 && this->input_ch != KEY_BACKSPACE){
         auto [x, y] = P.get_pos();
         int max_y, max_x;
@@ -225,14 +222,11 @@ void GameManager::update(GameWindow GAME, Player P){
                 }
                 break;
         }
-        //converte muri da struct di GameManager a struct di Window
-        w1 = convert_wall(room->wall1);
-        w2 = convert_wall(room->wall2);
 
         if (!mv_room)
             P.set_pos(x, y);
         werase(GAME.win);
-        GAME.draw(P, w1, w2);
+        GAME.draw(P, room->wall1, room->wall2);
         mvwprintw(GAME.win, 0, GAME.get_max_w()/1.25 - 3, "%d", this->input_ch);
         wrefresh(GAME.win);
         this->input_ch = wgetch(GAME.win);
@@ -289,7 +283,7 @@ void GameManager::new_room(char direction){
 
 void GameManager::create_walls(int max_h, int max_w){
     if (room->wall1.start == -1){
-        int n_walls = rand()%3;
+        //int n_walls = rand()%3;
 
         gen_wall(max_h, max_w);
         gen_wall(max_h, max_w);
@@ -349,13 +343,4 @@ void GameManager::gen_wall(int max_h, int max_w){
             room->wall1.end = tmp;
         }
     }
-}
-
-w GameManager::convert_wall(wall wa){
-    w w1;
-    w1.start = wa.start;
-    w1.end = wa.end;
-    w1.axis = wa.axis;
-    w1.horizontal = wa.horizontal;
-    return w1;
 }
