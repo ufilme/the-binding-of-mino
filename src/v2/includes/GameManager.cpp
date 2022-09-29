@@ -24,22 +24,6 @@ void GameManager::intro(){
         }
         switch (this->input_ch){
             case KEY_UP:
-                if (pos == -1){
-                    pos = 0;
-                }
-                else if (pos != 0){
-                    pos--;
-                }
-                break;
-            case KEY_DOWN:
-                if (pos == -1){
-                    pos = 0;
-                }
-                else if (pos != 2){
-                    pos++;
-                }
-                break;
-
             case 65:
                 if (pos == -1){
                     pos = 0;
@@ -48,6 +32,7 @@ void GameManager::intro(){
                     pos--;
                 }
                 break;
+            case KEY_DOWN:
             case 66:
                 if (pos == -1){
                     pos = 0;
@@ -126,53 +111,6 @@ void GameManager::update(GameWindow GAME, Player P){
         bool mv_room = false;
         switch (this->input_ch){
             case KEY_UP:
-                if (y > 1)
-                    y--;
-                else if (x >= max_x/2 - 2 && x <= max_x/2 + 1){
-                    //va alla stanza sopra
-                    mv_room = true;
-                    if (room->top == NULL)
-                        new_room('t');
-                    move_room('t', max_y, max_x);
-                    P.set_pos(x, max_y - 2);
-                }
-                break;
-            case KEY_DOWN:
-                if (y < max_y - 2)
-                    y++;
-                else if (x >= max_x/2 - 2 && x <= max_x/2 + 1){
-                    //va alla stanza sotto
-                    mv_room = true;
-                    if (room->bottom == NULL)
-                        new_room('b');
-                    move_room('b', max_y, max_x);
-                    P.set_pos(x, 1);
-                }
-                break;
-            case KEY_LEFT:
-                if (x > 1)
-                    x--;
-                else if (y == max_y/2 - 1 || y == max_y/2){
-                    //va alla stanza a sx
-                    mv_room = true;
-                    if (room->left == NULL)
-                        new_room('l');
-                    move_room('l', max_y, max_x);
-                    P.set_pos(max_x - 2, y);
-                }
-                break;
-            case KEY_RIGHT:
-                if (x < max_x - 2)
-                    x++;
-                else if (y == max_y/2 - 1 || y == max_y/2){
-                    //va alla stanza a dx
-                    mv_room = true;
-                    if (room->right == NULL)
-                        new_room('r');
-                    move_room('r', max_y, max_x);
-                    P.set_pos(1, y);
-                }
-                break;
             case 65:
                 if (y > 1)
                     y--;
@@ -185,6 +123,7 @@ void GameManager::update(GameWindow GAME, Player P){
                     P.set_pos(x, max_y - 2);
                 }
                 break;
+            case KEY_DOWN:
             case 66:
                 if (y < max_y - 2)
                     y++;
@@ -197,6 +136,7 @@ void GameManager::update(GameWindow GAME, Player P){
                     P.set_pos(x, 1);
                 }
                 break;
+            case KEY_LEFT:
             case 68:
                 if (x > 1)
                     x--;
@@ -209,6 +149,7 @@ void GameManager::update(GameWindow GAME, Player P){
                     P.set_pos(max_x - 2, y);
                 }
                 break;
+            case KEY_RIGHT:
             case 67:
                 if (x < max_x - 2)
                     x++;
