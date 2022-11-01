@@ -18,8 +18,6 @@ Window::Window(){
 
     this->set_max_w(max_w);
     this->set_max_h(max_h);
-
-    this->draw();
 }
 
 int Window::get_max_w(){
@@ -62,7 +60,7 @@ void Window::draw(){
     box(win, 0, 0);
 
     char title[] = "> The Binding of Mino <";
-    int length = sizeof(title) - 1;  // Discount the terminal '\0'
+    int length = sizeof(title) - 1; 
     mvwprintw(win, 0, max_w/2.50 - length/2, title);
 }
 
@@ -70,27 +68,21 @@ void Window::_delete(){
     delwin(win);
 }
 
-GameWindow::GameWindow(MenuWindow MENU){
+GameWindow::GameWindow(MenuWindow MENU) : Window(){
     Window();       //chiama costruttore classe madre, poi reinizializza win
-    delwin(win);
-
-    int max_h, max_w;
-    getmaxyx(MENU.win, max_h, max_w);
-    this->offset_h = (max_h - max_h/1.25)/2 + MENU.get_offset_h();
-    this->offset_w = (max_w - max_w/1.25)/2 + MENU.get_offset_w();
-
-    win = newwin(max_h/1.25, max_w/1.25, this->offset_h, this->offset_w);
-    keypad(win, TRUE);
-
-    this->set_max_w(max_w);
-    this->set_max_h(max_h);
 }
 
-void GameWindow::draw(Player P, wall wall1, wall wall2){
+void GameWindow::draw(Player P, Room *room){
     box(win, 0, 0);
     auto [x,y] = P.get_pos();
     mvwprintw(win, 0, 0, "y:%d x:%d", y, x);
     mvwprintw(win, y, x, "@");
+
+    auto [it, end] = room->playground_iter();
+
+    for (it; it != end; it++){
+        mvwprintw(win, it->get_y(), it->get_x(), "#");
+    }
 
     //stampa le 4 porte
     int max_y, max_x;
@@ -105,24 +97,9 @@ void GameWindow::draw(Player P, wall wall1, wall wall2){
     mvwprintw(win, 0, max_x/2 - 2, "    ");         //porta up
 
     mvwprintw(win, max_y - 1, max_x/2 - 2, "    "); //porta down
-
-    //stampa i muri
-    for (int i = wall1.start; i <= wall1.end; i++)
-    {
-        if (wall1.horizontal)
-            mvwprintw(win, wall1.axis, i, "-");
-        else
-            mvwprintw(win, i, wall1.axis, "|");
-    }
-
-    for (int i = wall2.start; i <= wall2.end; i++)
-    {
-        if (wall2.horizontal)
-            mvwprintw(win, wall2.axis, i, "-");
-        else
-            mvwprintw(win, i, wall2.axis, "|");
-    }
 }
+
+MenuWindow::MenuWindow() : Window(){};
 
 void MenuWindow::draw(int pos){
     //chiama metodo draw della classe Window
