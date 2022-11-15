@@ -1,9 +1,13 @@
 #include "Entity.hpp"
+#include <cstdlib>
+#include <ctime>
 
-Entity::Entity(int x, int y, char icon){
+Entity::Entity(int x, int y){
     this->x = x;
     this->y = y;
-    this->icon = icon;
+};
+
+Entity::Entity(){
 };
 
 std::tuple<int, int> Entity::get_pos(){
@@ -16,6 +20,36 @@ std::tuple<int, int> Entity::set_pos(int x, int y){
     return {this->x, this->y};
 }
 
-char Entity::get_icon(){
-    return icon;
+int Entity::get_x(){
+    return x;
+};
+
+int Entity::get_y(){
+    return y;
+};
+
+char *Entity::get_icon(){
+    return &icon;
+}
+
+Player::Player(int x, int y) : Entity(x, y){
+    this->icon = '@';
+}
+
+Player::Player(const Player& copy) : Entity(){
+    x = copy.x;
+    y = copy.y;
+    icon = copy.icon;
+};
+
+Enemy::Enemy(int x, int y) : Entity(x, y){
+    this->icon = '§';
+}
+
+Wall::Wall(int x, int y) : Entity(x, y){
+    this->icon = '#';
+}
+
+Artifact::Artifact(int x, int y) : Entity(x, y){
+    this->icon = 'X';
 }

@@ -1,5 +1,4 @@
 #include <ncurses.h>
-#include "Entity.hpp"
 #include "Room.hpp"
 
 class Window{
@@ -34,5 +33,5 @@ class GameWindow : public Window{
     protected:
     public:
         GameWindow(MenuWindow MENU);
-        void draw(Player P, Room *room);
+        void draw(Room *room);
 };

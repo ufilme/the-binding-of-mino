@@ -72,16 +72,16 @@ GameWindow::GameWindow(MenuWindow MENU) : Window(){
     Window();       //chiama costruttore classe madre, poi reinizializza win
 }
 
-void GameWindow::draw(Player P, Room *room){
+void GameWindow::draw(Room *room){
     box(win, 0, 0);
+    Player P = room->get_player();
     auto [x,y] = P.get_pos();
     mvwprintw(win, 0, 0, "y:%d x:%d", y, x);
     mvwprintw(win, y, x, "@");
 
     auto [it, end] = room->playground_iter();
-
     for (it; it != end; it++){
-        mvwprintw(win, it->get_y(), it->get_x(), "#");
+        mvwprintw(win, it->get_y(), it->get_x(), it->get_icon());
     }
 
     //stampa le 4 porte
