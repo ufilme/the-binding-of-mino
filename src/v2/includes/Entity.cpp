@@ -28,28 +28,28 @@ int Entity::get_y(){
     return y;
 };
 
-char *Entity::get_icon(){
-    return &icon;
+const char *Entity::get_icon(){
+    return icon;
 }
 
 Player::Player(int x, int y) : Entity(x, y){
-    this->icon = '@';
+    this->icon = "@";
 }
 
-Player::Player(const Player& copy) : Entity(){
+Player::Player(Player &copy) : Entity(){
     x = copy.x;
     y = copy.y;
     icon = copy.icon;
 };
 
 Enemy::Enemy(int x, int y) : Entity(x, y){
-    this->icon = '§';
+    this->icon = "*";
 }
 
 Wall::Wall(int x, int y) : Entity(x, y){
-    this->icon = '#';
+    this->icon = "#";
 }
 
 Artifact::Artifact(int x, int y) : Entity(x, y){
-    this->icon = 'X';
+    this->icon = "X";
 }

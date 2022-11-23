@@ -74,13 +74,13 @@ GameWindow::GameWindow(MenuWindow MENU) : Window(){
 
 void GameWindow::draw(Room *room){
     box(win, 0, 0);
-    Player P = room->get_player();
-    auto [x,y] = P.get_pos();
+    Player *P = room->get_player();
+    auto [x,y] = P->get_pos();
     mvwprintw(win, 0, 0, "y:%d x:%d", y, x);
     mvwprintw(win, y, x, "@");
 
     auto [it, end] = room->playground_iter();
-    for (it; it != end; it++){
+    for (; it != end; it++){
         mvwprintw(win, it->get_y(), it->get_x(), it->get_icon());
     }
 

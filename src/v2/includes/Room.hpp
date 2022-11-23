@@ -12,15 +12,16 @@ class Room{
         Room *right;
         Room *bottom;
         Room *left;
-        Player P;
+        Player *P;
         vector<Entity> playground;
     public:
-        Room(int N, int M, Player P);
-        Player get_player();
+        Room(int N, int M);
+        Player *get_player();
+        void set_player(Player *P);
         void random_generate_walls();
         void random_generate_enemies();
         void random_move_enemies();
-        bool is_cell_free(int x, int y);
+        bool is_something_in_the_way(int x, int y);
         Room *get_top();
         Room *get_right();
         Room *get_bottom();

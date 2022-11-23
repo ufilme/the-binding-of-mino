@@ -3,11 +3,12 @@
 #include <cstdlib>
 #include <ctime>
 
-Room::Room(int N, int M, Player P){
+Room::Room(int N, int M){
     //N colonne, M righe
     this->N = N;
     this->M = M;
-    this->P = P;
+    Player p = Player(N/2, M/2);
+    this->P = &p;
     top = NULL, right = NULL, bottom = NULL, left = NULL;
 };
 
@@ -66,6 +67,7 @@ Room *Room::new_room(Room *newroom, int sidebaby){
             newroom->set_right(this);
             break;
     }
+    newroom->set_player(this->get_player());
     newroom->random_generate_walls();
     newroom->random_generate_enemies();
     return newroom;
@@ -121,7 +123,8 @@ void Room::random_generate_enemies(){
         bool done = true;
         do  //position enemy on a free cell (no walls, artifacts...)
         {
-            if(!is_cell_free(x, y)){
+            if(!is_something_in_the_way(x, y)){
+                done = true;
                 playground.push_back(Enemy(x, y));
             }
             else{
@@ -148,22 +151,22 @@ void Room::random_move_enemies(){
                 switch (dir){
                     case 0: //up
                         if (y > 1){
-                                if(!is_cell_free(x, y-1))
+                                if(!is_something_in_the_way(x, y-1))
                                     y--;
                         }
                     case 1: //down
                         if (y < M - 2){
-                                if(!is_cell_free(x, y+1))
+                                if(!is_something_in_the_way(x, y+1))
                                     y++;
                         }
                     case 2: //right
                         if (x < N - 3){
-                                if(!is_cell_free(x+1, y) && !is_cell_free(x+2, y))    
+                                if(!is_something_in_the_way(x+1, y) && !is_something_in_the_way(x+2, y))    
                                     x += 2;
                         }
                     case 3: //left
                         if (x > 2){
-                                if(!is_cell_free(x-1, y) && !is_cell_free(x-2, y))    
+                                if(!is_something_in_the_way(x-1, y) && !is_something_in_the_way(x-2, y))    
                                     x -= 2;
                         }
                 }
@@ -172,7 +175,7 @@ void Room::random_move_enemies(){
     }
 };
 
-bool Room::is_cell_free(int x, int y){
+bool Room::is_something_in_the_way(int x, int y){
     /*
         el : must be a reference because we cannot copy arrays.
         On each loop, el is set as a reference to playground[n], 
@@ -183,13 +186,17 @@ bool Room::is_cell_free(int x, int y){
     for (auto & el : playground){
         if (el.get_x() == x && el.get_y() == y) return true;
     }
-    auto[Px, Py] = P.get_pos();
+    auto[Px, Py] = P->get_pos();
     if (Px == x && Py == y)
         return true;
 
     return false;
 }
 
-Player Room::get_player(){
+Player *Room::get_player(){
     return P;
+}
+
+void Room::set_player(Player *P){
+    this->P = P;
 }

@@ -1,6 +1,6 @@
-OBJS	= GameManager.o Window.o Entity.o Room.o Object.o main.o
-SOURCE	= includes/GameManager.cpp includes/Window.cpp includes/Entity.cpp includes/Room.cpp includes/Object.cpp main.cpp
-HEADER	= includes/GameManager.hpp includes/Window.hpp includes/Entity.hpp includes/Room.hpp includes/Object.hpp
+OBJS	= GameManager.o Window.o Entity.o Room.o main.o
+SOURCE	= includes/GameManager.cpp includes/Window.cpp includes/Entity.cpp includes/Room.cpp main.cpp
+HEADER	= includes/GameManager.hpp includes/Window.hpp includes/Entity.hpp includes/Room.hpp
 OUT		= main
 CC	 	= g++
 FLAGS	= -g -c -Wall -std=c++17
@@ -20,9 +20,6 @@ Entity.o: includes/Entity.cpp
 
 Room.o: includes/Room.cpp
 	$(CC) $(FLAGS) includes/Room.cpp
-
-Object.o: includes/Object.cpp
-	$(CC) $(FLAGS) includes/Object.cpp
 
 main.o: main.cpp
 	$(CC) $(FLAGS) main.cpp

@@ -3,7 +3,7 @@
 class Entity{
     protected:
         int x, y;
-        char icon;
+        const char *icon;
     public:
         Entity(int x, int y);
         Entity();
@@ -11,13 +11,13 @@ class Entity{
         std::tuple<int, int> set_pos(int x, int y);
         int get_x();
         int get_y();
-        char *get_icon();
+        const char *get_icon();
 };
 
 class Player : public Entity{
     public:
         Player(int x, int y);
-        Player(const Player& copy);
+        Player(Player &copy);
 };
 
 class Enemy : public Entity{
