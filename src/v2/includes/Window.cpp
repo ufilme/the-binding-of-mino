@@ -79,8 +79,10 @@ void GameWindow::draw(Room *room){
     mvwprintw(win, 0, 0, "y:%d x:%d", y, x);
     mvwprintw(win, y, x, "@");
 
-    auto [it, end] = room->playground_iter();
-    for (; it != end; it++){
+    for (auto [it, end] = room->playground_iter(); it != end; it++){
+        mvwprintw(win, it->get_y(), it->get_x(), it->get_icon());
+    }
+    for (auto [it, end] = room->enemies_iter(); it != end; it++){
         mvwprintw(win, it->get_y(), it->get_x(), it->get_icon());
     }
 

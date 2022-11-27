@@ -2,6 +2,7 @@
 #include <cstring>
 #include <cstdlib>
 #include <ctime>
+#include <iostream>
 
 Room::Room(int N, int M){
     //N colonne, M righe
@@ -46,6 +47,10 @@ void Room::set_left(Room *room){
 
 std::tuple<vector<Entity>::iterator, vector<Entity>::iterator> Room::playground_iter(){
     return {this->playground.begin(), this->playground.end()};
+};
+
+std::tuple<vector<Enemy>::iterator, vector<Enemy>::iterator> Room::enemies_iter(){
+    return {this->enemies.begin(), this->enemies.end()};
 };
 
 Room *Room::new_room(Room *newroom, int sidebaby){
@@ -125,7 +130,7 @@ void Room::random_generate_enemies(){
         {
             if(!is_something_in_the_way(x, y)){
                 done = true;
-                playground.push_back(Enemy(x, y));
+                enemies.push_back(Enemy(x, y));
             }
             else{
                 done = false;
@@ -138,39 +143,43 @@ void Room::random_generate_enemies(){
 
 
 void Room::random_move_enemies(){
-    for (auto & enemy : playground){
-        if (typeid(enemy) == typeid(Enemy)){
-            auto[x, y] = enemy.get_pos();
-            srand(time(NULL));
-            int action = rand() % 10;
-            if (action < 3){  //30% probability of shooting
-                //shoot code
+    for (auto & enemy : enemies){
+        auto[x, y] = enemy.get_pos();
+        srand(time(NULL));
+        int action = rand() % 10;
+        if (action < 3){  //30% probability of shooting
+            //shoot code
+        }
+        else{           //70% probability of moving
+            int dir = rand() % 4;
+            switch (dir){
+                case 0: //up
+                    if (y > 1){
+                        if(!is_something_in_the_way(x, y-1)){
+                            y--;
+                        }
+                    }
+                case 1: //down
+                    if (y < M - 2){
+                        if(!is_something_in_the_way(x, y+1)){
+                            y++;
+                        }
+                    }
+                case 2: //right
+                    if (x < N - 3){
+                        if(!is_something_in_the_way(x+1, y) && !is_something_in_the_way(x+2, y)){
+                            x += 2;
+                        }
+                    }
+                case 3: //left
+                    if (x > 2){
+                        if(!is_something_in_the_way(x-1, y) && !is_something_in_the_way(x-2, y)){
+                            x -= 2;
+                            break;
+                        }
+                    }
             }
-            else{           //70% probability of moving
-                int dir = rand() % 4;
-                switch (dir){
-                    case 0: //up
-                        if (y > 1){
-                                if(!is_something_in_the_way(x, y-1))
-                                    y--;
-                        }
-                    case 1: //down
-                        if (y < M - 2){
-                                if(!is_something_in_the_way(x, y+1))
-                                    y++;
-                        }
-                    case 2: //right
-                        if (x < N - 3){
-                                if(!is_something_in_the_way(x+1, y) && !is_something_in_the_way(x+2, y))    
-                                    x += 2;
-                        }
-                    case 3: //left
-                        if (x > 2){
-                                if(!is_something_in_the_way(x-1, y) && !is_something_in_the_way(x-2, y))    
-                                    x -= 2;
-                        }
-                }
-            }
+            enemy.set_pos(x, y);
         }
     }
 };
@@ -184,6 +193,9 @@ bool Room::is_something_in_the_way(int x, int y){
         and so on. It retrieves the value via iteration.
     */
     for (auto & el : playground){
+        if (el.get_x() == x && el.get_y() == y) return true;
+    }
+    for (auto & el : enemies){
         if (el.get_x() == x && el.get_y() == y) return true;
     }
     auto[Px, Py] = P->get_pos();

@@ -14,6 +14,7 @@ class Room{
         Room *left;
         Player *P;
         vector<Entity> playground;
+        vector<Enemy> enemies;
     public:
         Room(int N, int M);
         Player *get_player();
@@ -33,4 +34,5 @@ class Room{
         Room *new_room(Room *room, int sidebaby);
         void change_room();
         std::tuple<vector<Entity>::iterator, vector<Entity>::iterator> playground_iter();
+        std::tuple<vector<Enemy>::iterator, vector<Enemy>::iterator> enemies_iter();
 };
