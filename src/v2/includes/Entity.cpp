@@ -32,18 +32,45 @@ const char *Entity::get_icon(){
     return icon;
 }
 
-Player::Player(int x, int y) : Entity(x, y){
+Living::Living(int x, int y) : Entity(x, y){
+    this-> health = 3;
+};
+
+Living::Living(){
+};
+
+void Living::inc_health(int value){
+    this->health += value;
+};
+
+void Living::dec_health(int value){
+    this->health -= value;
+};
+
+
+int Living::get_health(){
+    return this->health;
+};
+
+Player::Player(int x, int y) : Living(x, y){
     this->icon = "@";
 }
 
-Player::Player(Player &copy) : Entity(){
-    x = copy.x;
-    y = copy.y;
-    icon = copy.icon;
+Player::Player(){
+    
+}
+/*
+Player::Player(Player &copy){
+    this->x = copy.x;
+    this->y = copy.y;
+    this->icon = copy.icon;
+    this->health = copy.health;
 };
+*/
 
-Enemy::Enemy(int x, int y) : Entity(x, y){
+Enemy::Enemy(int x, int y, int health) : Living(x, y){
     this->icon = "*";
+    this->health = health;
 }
 
 Wall::Wall(int x, int y) : Entity(x, y){

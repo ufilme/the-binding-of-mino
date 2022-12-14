@@ -9,8 +9,16 @@ Room::Room(int N, int M){
     this->N = N;
     this->M = M;
     Player p = Player(N/2, M/2);
-    this->P = &p;
+    P = p;
     top = NULL, right = NULL, bottom = NULL, left = NULL;
+};
+
+int Room::get_max_x(){
+    return this->N;
+};
+
+int Room::get_max_y(){
+    return this->M;
 };
 
 Room *Room::get_top(){
@@ -93,7 +101,7 @@ void Room::random_generate_walls(){
             case 2:
             case 3:
                 span = rand() % (N-4) + 3; break;
-        };
+        }
         for (int h = 0; h < span; h++){
             switch (way){
             case 0:
@@ -198,17 +206,24 @@ bool Room::is_something_in_the_way(int x, int y){
     for (auto & el : enemies){
         if (el.get_x() == x && el.get_y() == y) return true;
     }
-    auto[Px, Py] = P->get_pos();
+    auto[Px, Py] = P.get_pos();
     if (Px == x && Py == y)
         return true;
 
     return false;
 }
 
-Player *Room::get_player(){
+bool Room::is_enemy_in_the_way(int x, int y){
+    for (auto & el : enemies){
+        if (el.get_x() == x && el.get_y() == y) return true;
+    }
+    return false;
+}
+
+Player Room::get_player(){
     return P;
 }
 
-void Room::set_player(Player *P){
+void Room::set_player(Player P){
     this->P = P;
 }

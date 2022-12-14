@@ -2,6 +2,7 @@
 #include <chrono>
 
 using namespace std;
+using chrono::system_clock;
 
 GameManager::GameManager(bool active){
 };
@@ -92,35 +93,37 @@ void GameManager::commands(MenuWindow MENU){
 }
 
 void GameManager::update(GameWindow GAME, Room *room){
-    wtimeout(GAME.win, 0);                              //non blocking input
-    auto start_time = chrono::steady_clock::now();      //to move enemies
-    auto en_move_t =  chrono::milliseconds(500);        //enemies moving time
+    wtimeout(GAME.win, 0);                                          //non blocking input
+    auto enemy_start_t = system_clock::now().time_since_epoch();    //to move enemies
+    auto enemy_move_t =  chrono::milliseconds(500);                 //enemies moving time
     GAME.draw(room);
-    Player *P = room->get_player();
+    Player P = room->get_player();
     int max_y, max_x;
     bool roomchanged = 0;
     while (this->input_ch != 127 && this->input_ch != KEY_BACKSPACE){
-        if (chrono::steady_clock::now() - start_time > en_move_t){
-            room->random_move_enemies();                //move enemies
+        if (system_clock::now().time_since_epoch() - enemy_start_t > enemy_move_t){
+            room->random_move_enemies();                            //move enemies
             GAME.draw(room);
-            start_time = chrono::steady_clock::now();   //resets start time
+            enemy_start_t = system_clock::now().time_since_epoch(); //resets start time
         }
         roomchanged = 0;
-        auto [x, y] = P->get_pos();
+        auto [x, y] = P.get_pos();
         getmaxyx(GAME.win, max_y, max_x);
         switch (this->input_ch){
             case KEY_UP:
             case 65:
                 if (y > 1){
                     if(!room->is_something_in_the_way(x, y-1))
-                        y--;
+                        y--;                                        //move if cell is free
+                    else if(room->is_enemy_in_the_way(x, y-1))
+                        P.dec_health();                            //decrease life if bumped into enemy
                 }
                 else if (x >= max_x/2 - 2 && x <= max_x/2 + 1){
                     if (room->get_top() == NULL)
                         room = room->new_room(new Room(max_x, max_y), 0);
                     else
                         room = room->get_top();
-                    P->set_pos(x, max_y - 2);
+                    P.set_pos(x, max_y - 2);
                     roomchanged = 1;
                 }
                 break;
@@ -128,14 +131,16 @@ void GameManager::update(GameWindow GAME, Room *room){
             case 67:
                 if (x < max_x - 3){
                     if(!room->is_something_in_the_way(x+1, y) && !room->is_something_in_the_way(x+2, y))    
-                        x += 2;
+                        x += 2;                                     //move if cell is free
+                    else if(room->is_enemy_in_the_way(x+1, y) || room->is_enemy_in_the_way(x+2, y))
+                        P.dec_health();                            //decrease life if bumped into enemy
                 }
                 else if (y == max_y/2 - 1 || y == max_y/2){
                     if (room->get_right() == NULL)
                         room = room->new_room(new Room(max_x, max_y), 1);
                     else
                         room = room->get_right();
-                    P->set_pos(1, y);
+                    P.set_pos(1, y);
                     roomchanged = 1;
                 }
                 break;
@@ -143,14 +148,16 @@ void GameManager::update(GameWindow GAME, Room *room){
             case 66:
                 if (y < max_y - 2){
                     if(!room->is_something_in_the_way(x, y+1))
-                        y++;
+                        y++;                                        //move if cell is free
+                    else if(room->is_enemy_in_the_way(x, y+1))
+                        P.dec_health();                            //decrease life if bumped into enemy
                 }
                 else if (x >= max_x/2 - 2 && x <= max_x/2 + 1){
                     if (room->get_bottom() == NULL)
                         room = room->new_room(new Room(max_x, max_y), 2);
                     else
                         room = room->get_bottom();
-                    P->set_pos(x, 1);
+                    P.set_pos(x, 1);
                     roomchanged = 1;
                 }
                 break;
@@ -158,20 +165,22 @@ void GameManager::update(GameWindow GAME, Room *room){
             case 68:
                 if (x > 2){
                     if(!room->is_something_in_the_way(x-1, y) && !room->is_something_in_the_way(x-2, y))    
-                        x -= 2;
+                        x -= 2;                                     //move if cell is free
+                    else if(room->is_enemy_in_the_way(x-1, y) || room->is_enemy_in_the_way(x-2, y))
+                        P.dec_health();                            //decrease life if bumped into enemy
                 }
                 else if (y == max_y/2 - 1 || y == max_y/2){
                     if (room->get_left() == NULL)
                         room = room->new_room(new Room(max_x, max_y), 3);
                     else
                         room = room->get_left();
-                    P->set_pos(max_x - 2, y);
+                    P.set_pos(max_x - 2, y);
                     roomchanged = 1;
                 }
                 break;
         }
         if (!roomchanged)
-            P->set_pos(x, y);
+            P.set_pos(x, y);
         room->set_player(P);
         werase(GAME.win);
         GAME.draw(room);

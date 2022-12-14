@@ -12,17 +12,20 @@ class Room{
         Room *right;
         Room *bottom;
         Room *left;
-        Player *P;
+        Player P;
         vector<Entity> playground;
         vector<Enemy> enemies;
     public:
         Room(int N, int M);
-        Player *get_player();
-        void set_player(Player *P);
+        int get_max_x();
+        int get_max_y();
+        Player get_player();
+        void set_player(Player P);
         void random_generate_walls();
         void random_generate_enemies();
         void random_move_enemies();
         bool is_something_in_the_way(int x, int y);
+        bool is_enemy_in_the_way(int x, int y);
         Room *get_top();
         Room *get_right();
         Room *get_bottom();

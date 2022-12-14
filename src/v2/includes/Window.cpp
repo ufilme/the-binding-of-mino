@@ -74,11 +74,14 @@ GameWindow::GameWindow(MenuWindow MENU) : Window(){
 
 void GameWindow::draw(Room *room){
     box(win, 0, 0);
-    Player *P = room->get_player();
-    auto [x,y] = P->get_pos();
-    mvwprintw(win, 0, 0, "y:%d x:%d", y, x);
-    mvwprintw(win, y, x, "@");
+    Player P = room->get_player();
+    int p_health = P.get_health();
+    auto [x,y] = P.get_pos();
+    mvwprintw(win, room->get_max_y()-1, 0, "y:%d x:%d", y, x);
+    mvwprintw(win, 0, 1, " Health: %d ", p_health);     //player's health
+    mvwprintw(win, y, x, "@");                          //player's icon
 
+    //print walls and enemies
     for (auto [it, end] = room->playground_iter(); it != end; it++){
         mvwprintw(win, it->get_y(), it->get_x(), it->get_icon());
     }

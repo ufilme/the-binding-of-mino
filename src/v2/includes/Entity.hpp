@@ -14,15 +14,27 @@ class Entity{
         const char *get_icon();
 };
 
-class Player : public Entity{
+class Living : public Entity{
+    protected:
+        int health;
     public:
-        Player(int x, int y);
-        Player(Player &copy);
+        Living(int x, int y);
+        Living();
+        void inc_health(int value = 1);
+        void dec_health(int value = 1);
+        int get_health();
 };
 
-class Enemy : public Entity{
+class Player : public Living{
     public:
-        Enemy(int x, int y);
+        Player(int x, int y);
+        Player();
+        //Player(Player &copy);
+};
+
+class Enemy : public Living{
+    public:
+        Enemy(int x, int y, int health = 1);
 };
 
 class Wall : public Entity{
