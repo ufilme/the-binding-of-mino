@@ -93,18 +93,18 @@ void GameManager::commands(MenuWindow MENU){
 }
 
 void GameManager::update(GameWindow GAME, Room *room){
-    wtimeout(GAME.win, 0);                                          //non blocking input
-    auto enemy_start_t = system_clock::now().time_since_epoch();    //to move enemies
-    auto enemy_move_t =  chrono::milliseconds(500);                 //enemies moving time
+    wtimeout(GAME.win, 0);                              //non blocking input
+    auto start_time = system_clock::now().time_since_epoch();      //to move enemies
+    auto en_move_t =  chrono::milliseconds(250);        //enemies moving time
     GAME.draw(room);
     Player P = room->get_player();
     int max_y, max_x;
     bool roomchanged = 0;
     while (this->input_ch != 127 && this->input_ch != KEY_BACKSPACE){
-        if (system_clock::now().time_since_epoch() - enemy_start_t > enemy_move_t){
-            room->random_move_enemies();                            //move enemies
+        if (system_clock::now().time_since_epoch() - start_time > en_move_t){
+            room->random_move_enemies();                //move enemies
             GAME.draw(room);
-            enemy_start_t = system_clock::now().time_since_epoch(); //resets start time
+            start_time = system_clock::now().time_since_epoch();   //resets start time
         }
         roomchanged = 0;
         auto [x, y] = P.get_pos();
