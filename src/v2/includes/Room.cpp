@@ -8,8 +8,7 @@ Room::Room(int N, int M){
     //N colonne, M righe
     this->N = N;
     this->M = M;
-    Player p = Player(N/2, M/2);
-    P = p;
+    P = Player(N/2, M/2);
     top = NULL, right = NULL, bottom = NULL, left = NULL;
 };
 
@@ -53,13 +52,13 @@ void Room::set_left(Room *room){
     this->left = room;
 };
 
-std::tuple<vector<Entity>::iterator, vector<Entity>::iterator> Room::playground_iter(){
-    return {this->playground.begin(), this->playground.end()};
-};
+DynamicArray<Entity> Room::get_playground(){
+    return playground;
+}
 
-std::tuple<vector<Enemy>::iterator, vector<Enemy>::iterator> Room::enemies_iter(){
-    return {this->enemies.begin(), this->enemies.end()};
-};
+DynamicArray<Enemy> Room::get_enemies(){
+    return enemies;
+}
 
 Room *Room::new_room(Room *newroom, int sidebaby){
     switch (sidebaby){   // 0 up 1 right 2 bottom 3 left
@@ -106,19 +105,19 @@ void Room::random_generate_walls(){
             switch (way){
             case 0:
                 if (y - h < 1) break;
-                playground.push_back(Wall(x, y - h));
+                playground.push(Wall(x, y - h));
                 break;
             case 1:
                 if (y + h >= M - 1) break;
-                playground.push_back(Wall(x, y + h));
+                playground.push(Wall(x, y + h));
                 break;
             case 2:
                 if (x + h >= N- 1) break;
-                playground.push_back(Wall(x + h, y));
+                playground.push(Wall(x + h, y));
                 break;
             case 3:
                 if (x - h < 1) break;
-                playground.push_back(Wall(x - h, y));
+                playground.push(Wall(x - h, y));
                 break;
             }
         }   
@@ -138,7 +137,7 @@ void Room::random_generate_enemies(){
         {
             if(!is_something_in_the_way(x, y)){
                 done = true;
-                enemies.push_back(Enemy(x, y));
+                enemies.push(Enemy(x, y));
             }
             else{
                 done = false;
@@ -151,7 +150,7 @@ void Room::random_generate_enemies(){
 
 
 void Room::random_move_enemies(){
-    for (auto & enemy : enemies){
+    for (Enemy & enemy : enemies){
         auto[x, y] = enemy.get_pos();
         srand(time(NULL));
         int action = rand() % 10;
@@ -194,16 +193,23 @@ void Room::random_move_enemies(){
 
 bool Room::is_something_in_the_way(int x, int y){
     /*
-        el : must be a reference because we cannot copy arrays.
+        for (auto &el : array){
+        // el is a reference to an item of array
+        // We can change array's items by changing el
+        }
+        for (auto el : array){
+        // Value of el is copied from an item of array
+        // We can not change array's items by changing el
+        }
         On each loop, el is set as a reference to playground[n], 
         with n equaling the current loop count starting from 0. 
         So, el is playground[0] on the first round, on the second it's playground[1], 
         and so on. It retrieves the value via iteration.
     */
-    for (auto & el : playground){
+    for (Entity & el : playground){
         if (el.get_x() == x && el.get_y() == y) return true;
     }
-    for (auto & el : enemies){
+    for (Enemy & el : enemies){
         if (el.get_x() == x && el.get_y() == y) return true;
     }
     auto[Px, Py] = P.get_pos();
@@ -214,7 +220,7 @@ bool Room::is_something_in_the_way(int x, int y){
 }
 
 bool Room::is_enemy_in_the_way(int x, int y){
-    for (auto & el : enemies){
+    for (Enemy & el : enemies){
         if (el.get_x() == x && el.get_y() == y) return true;
     }
     return false;

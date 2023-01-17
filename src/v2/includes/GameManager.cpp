@@ -4,46 +4,40 @@
 using namespace std;
 using chrono::system_clock;
 
-GameManager::GameManager(bool active){
-};
+GameManager::GameManager(){};
 
-void GameManager::intro(){
+void GameManager::intro(){};
+
+void GameManager::start(){
     MenuWindow MENU = MenuWindow();
     bool exit = false;
     int pos = 0;
-    while ((this->input_ch != 127 && this->input_ch != KEY_BACKSPACE) && !exit){
-        if (this->input_ch == KEY_RESIZE){
+    while ((this->input != 127 && this->input != KEY_BACKSPACE) && !exit){
+        if (this->input == KEY_RESIZE)
             MENU.resize();
-        }
-        switch (this->input_ch){
+        switch (this->input){
             case KEY_UP:
             case 65:
-                if (pos == -1){
+                if (pos == -1)
                     pos = 0;
-                }
-                else if (pos != 0){
+                else if (pos != 0)
                     pos--;
-                }
                 break;
             case KEY_DOWN:
             case 66:
-                if (pos == -1){
+                if (pos == -1)
                     pos = 0;
-                }
-                else if (pos != 2){
+                else if (pos != 2)
                     pos++;
-                }
                 break;
-
             case 10:
                 switch (pos){
                     case 0:
-                        this->input_ch = 0;
-                        this->start(MENU);
+                        this->input = 0;
+                        this->pre_update(MENU);
                         MENU.resize();
                         break;
                     case 1:
-                        //mostra i comandi
                         this->commands(MENU);
                         MENU.resize();
                         break;
@@ -55,13 +49,13 @@ void GameManager::intro(){
         }
         // sovrascrivi metodo draw nel menuWindow e poi fai disegnare qua
         MENU.draw(pos);
-        mvwprintw(MENU.win, 0, 0, "%d %d", pos, this->input_ch);
+        mvwprintw(MENU.win, 0, 0, "%d %d", pos, this->input);
         if (!exit)
-            this->input_ch = wgetch(MENU.win);
+            this->input = wgetch(MENU.win);
     }
 }
 
-void GameManager::start(MenuWindow MENU){
+void GameManager::pre_update(MenuWindow MENU){
     GameWindow GAME = GameWindow(MENU);
     int max_y, max_x;
     getmaxyx(GAME.win, max_y, max_x);
@@ -72,21 +66,18 @@ void GameManager::start(MenuWindow MENU){
 void GameManager::commands(MenuWindow MENU){
     bool back = false;
     int pos = 0;
-    this->input_ch = 0;
-    while ((this->input_ch != 127 && this->input_ch != KEY_BACKSPACE) && !back){
-        if (this->input_ch == KEY_RESIZE){
+    this->input = 0;
+    while ((this->input != 127 && this->input != KEY_BACKSPACE) && !back){
+        if (this->input == KEY_RESIZE)
             MENU.resize();
-        }
-       if (this->input_ch == 10){
-            //se viene usata la voce "Indietro"
-            back = true;
-        }
+       if (this->input == 10)
+            back = true; //se viene usata la voce "Indietro"
         werase(MENU.win);
         MENU.cmd_draw(pos);     //stampa il menu dei comandi
-        mvwprintw(MENU.win, 0, 0, "%d %d", pos, this->input_ch);
+        mvwprintw(MENU.win, 0, 0, "%d %d", pos, this->input);
         wrefresh(MENU.win);
         if (!back)
-            this->input_ch = wgetch(MENU.win);
+            this->input = wgetch(MENU.win);
     }
     werase(MENU.win);
     wrefresh(MENU.win);
@@ -100,7 +91,7 @@ void GameManager::update(GameWindow GAME, Room *room){
     Player P = room->get_player();
     int max_y, max_x;
     bool roomchanged = 0;
-    while (this->input_ch != 127 && this->input_ch != KEY_BACKSPACE){
+    while (this->input != 127 && this->input != KEY_BACKSPACE){
         if (system_clock::now().time_since_epoch() - start_time > en_move_t){
             room->random_move_enemies();                //move enemies
             GAME.draw(room);
@@ -109,7 +100,7 @@ void GameManager::update(GameWindow GAME, Room *room){
         roomchanged = 0;
         auto [x, y] = P.get_pos();
         getmaxyx(GAME.win, max_y, max_x);
-        switch (this->input_ch){
+        switch (this->input){
             case KEY_UP:
             case 65:
                 if (y > 1){
@@ -184,9 +175,9 @@ void GameManager::update(GameWindow GAME, Room *room){
         room->set_player(P);
         werase(GAME.win);
         GAME.draw(room);
-        mvwprintw(GAME.win, 0, GAME.get_max_w()/1.25 - 3, "%d", this->input_ch);
+        mvwprintw(GAME.win, 0, GAME.get_max_w()/1.25 - 3, "%d", this->input);
         wrefresh(GAME.win);
-        this->input_ch = wgetch(GAME.win);
+        this->input = wgetch(GAME.win);
     }
     werase(GAME.win);
     wrefresh(GAME.win);

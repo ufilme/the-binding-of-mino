@@ -1,9 +1,9 @@
 #include "includes/GameManager.hpp"
 
 int main(){
-    GameManager TBOM = GameManager(true);
+    GameManager TBOM = GameManager();
 
-    TBOM.intro();
+    TBOM.start();
 
     // deallocates memory and ends ncurses
     endwin();

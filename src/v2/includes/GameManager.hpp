@@ -3,15 +3,14 @@
 
 class GameManager{
     private:
-        int input_ch;
+        int input;
     protected:
-        bool active;
         Room *room;
     public:
-        GameManager(bool active);
+        GameManager();
         void intro();
-        void start(MenuWindow WIN);
+        void start();
+        void pre_update(MenuWindow WIN);
         void update(GameWindow WIN, Room *room);
-        void update_screen(Window WIN);
         void commands(MenuWindow MENU);
 };

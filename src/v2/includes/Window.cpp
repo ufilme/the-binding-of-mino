@@ -82,11 +82,13 @@ void GameWindow::draw(Room *room){
     mvwprintw(win, y, x, "@");                          //player's icon
 
     //print walls and enemies
-    for (auto [it, end] = room->playground_iter(); it != end; it++){
-        mvwprintw(win, it->get_y(), it->get_x(), it->get_icon());
+    DynamicArray<Entity> playground = room->get_playground();
+    for (Entity & obj : playground){
+        mvwprintw(win, obj.get_y(), obj.get_x(), obj.get_icon());
     }
-    for (auto [it, end] = room->enemies_iter(); it != end; it++){
-        mvwprintw(win, it->get_y(), it->get_x(), it->get_icon());
+    DynamicArray<Enemy> enemies = room->get_enemies();
+    for (Enemy & en : enemies){
+        mvwprintw(win, en.get_y(), en.get_x(), en.get_icon());
     }
 
     //stampa le 4 porte

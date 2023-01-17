@@ -1,6 +1,4 @@
-#include "Entity.hpp"
-#include <typeinfo>
-#include <vector>
+#include "DynamicArray.hpp"
 #include <tuple>
 
 using std::vector;
@@ -13,8 +11,8 @@ class Room{
         Room *bottom;
         Room *left;
         Player P;
-        vector<Entity> playground;
-        vector<Enemy> enemies;
+        DynamicArray<Entity> playground;
+        DynamicArray<Enemy> enemies;
     public:
         Room(int N, int M);
         int get_max_x();
@@ -36,6 +34,6 @@ class Room{
         void set_left(Room *room);
         Room *new_room(Room *room, int sidebaby);
         void change_room();
-        std::tuple<vector<Entity>::iterator, vector<Entity>::iterator> playground_iter();
-        std::tuple<vector<Enemy>::iterator, vector<Enemy>::iterator> enemies_iter();
+        DynamicArray<Entity> get_playground();
+        DynamicArray<Enemy> get_enemies();
 };
