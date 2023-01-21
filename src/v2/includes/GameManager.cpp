@@ -83,20 +83,27 @@ void GameManager::commands(MenuWindow MENU){
     wrefresh(MENU.win);
 }
 
+system_clock::duration timed_moving(system_clock::duration start_t, system_clock::duration end_t, Room *room, void (Room::*func)()){
+    if (system_clock::now().time_since_epoch() - start_t > end_t){
+        (room->*func)();
+        return system_clock::now().time_since_epoch();
+    }
+    return start_t;
+}
+
 void GameManager::update(GameWindow GAME, Room *room){
     wtimeout(GAME.win, 0);                              //non blocking input
-    auto start_time = system_clock::now().time_since_epoch();      //to move enemies
+    auto en_start_t = system_clock::now().time_since_epoch();      //to move enemies
+    auto b_start_t = en_start_t;
     auto en_move_t =  chrono::milliseconds(250);        //enemies moving time
+    auto b_move_t = chrono::milliseconds(100);  // bullets moving time
     GAME.draw(room);
     Player P = room->get_player();
     int max_y, max_x;
     bool roomchanged = 0;
     while (this->input != 127 && this->input != KEY_BACKSPACE){
-        if (system_clock::now().time_since_epoch() - start_time > en_move_t){
-            room->random_move_enemies();                //move enemies
-            GAME.draw(room);
-            start_time = system_clock::now().time_since_epoch();   //resets start time
-        }
+        en_start_t = timed_moving(en_start_t, en_move_t, room, &Room::random_move_enemies);
+        b_start_t = timed_moving(b_start_t, b_move_t, room, &Room::move_bullets);
         roomchanged = 0;
         auto [x, y] = P.get_pos();
         getmaxyx(GAME.win, max_y, max_x);

@@ -6,6 +6,17 @@ DynamicArray<L>::DynamicArray(){
     size = 0;
 };
 
+
+template <class L>
+L DynamicArray<L>::operator[](int i){
+    return elements[i];
+}
+
+template <class L>
+int DynamicArray<L>::get_size(){
+    return size;
+}
+
 // Create a tmp copy of the array pointer 
 // Expand the array with the size + 1
 // Copy each element from the tmp to the new array
@@ -17,12 +28,31 @@ void DynamicArray<L>::push(L element){
 
     elements[size - 1] = element;
 
-    for (int i = 0; i < size - 1; i++){
+    for (int i = 0; i < size - 1; i++)
         elements[i] = tmp[i];
+
+    delete[] tmp;
+};
+
+template <class L>
+void DynamicArray<L>::remove_element(L element){
+    L *tmp = elements;
+    elements = new L[--size];
+
+    int j = 0;
+    for (int i = 0; i < size + 1; i++){
+        if (tmp[i] != element)
+            elements[j++] = tmp[i];
     }
 
     delete[] tmp;
 };
+
+template <class L>
+void DynamicArray<L>::reset(){
+    delete[] elements;
+    elements = NULL;
+}
 
 // begin() and end() are used for range loops
 
@@ -46,3 +76,5 @@ L *DynamicArray<L>::end(){
 
 template class DynamicArray<Entity>;
 template class DynamicArray<Enemy>;
+template class DynamicArray<Bullet>;
+template class DynamicArray<int>;

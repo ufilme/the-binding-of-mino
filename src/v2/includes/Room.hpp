@@ -1,8 +1,6 @@
 #include "DynamicArray.hpp"
 #include <tuple>
 
-using std::vector;
-
 class Room{
     protected:
         int N, M;       //N colonne, M righe
@@ -13,6 +11,7 @@ class Room{
         Player P;
         DynamicArray<Entity> playground;
         DynamicArray<Enemy> enemies;
+        DynamicArray<Bullet> bullets;
     public:
         Room(int N, int M);
         int get_max_x();
@@ -21,7 +20,9 @@ class Room{
         void set_player(Player P);
         void random_generate_walls();
         void random_generate_enemies();
+        std::tuple<int, int, int> random_generate_bullets(int x, int y, DynamicArray<int> excluded_dir);
         void random_move_enemies();
+        void move_bullets();
         bool is_something_in_the_way(int x, int y);
         bool is_enemy_in_the_way(int x, int y);
         Room *get_top();
@@ -36,4 +37,5 @@ class Room{
         void change_room();
         DynamicArray<Entity> get_playground();
         DynamicArray<Enemy> get_enemies();
+        DynamicArray<Bullet> get_bullets();
 };

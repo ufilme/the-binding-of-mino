@@ -60,6 +60,10 @@ DynamicArray<Enemy> Room::get_enemies(){
     return enemies;
 }
 
+DynamicArray<Bullet> Room::get_bullets(){
+    return bullets;
+}
+
 Room *Room::new_room(Room *newroom, int sidebaby){
     switch (sidebaby){   // 0 up 1 right 2 bottom 3 left
         case 0:
@@ -148,17 +152,73 @@ void Room::random_generate_enemies(){
     }
 };
 
+std::tuple<int, int, int> Room::random_generate_bullets(int x, int y, DynamicArray<int> excluded_dir){
+    int dir = rand() % 4;
+    for (int el : excluded_dir){
+        if (dir == el){
+            return random_generate_bullets(x, y, excluded_dir);
+        }
+    }
+    switch (dir){
+        case 0: //up
+                if (y > 1){
+                    if(!is_something_in_the_way(x, y-1)){
+                        y--;
+                    } else {
+                        excluded_dir.push(dir);
+                        return random_generate_bullets(x, y, excluded_dir);
+                    }
+                }
+            break;
+        case 1: //down
+            if (y < M - 2){
+                if(!is_something_in_the_way(x, y+1)){
+                    y++;
+                } else {
+                    excluded_dir.push(dir);
+                    return random_generate_bullets(x, y, excluded_dir);
+                }
+            }
+            break;
+        case 2: //right
+            if (x < N - 3){
+                if(!is_something_in_the_way(x+1, y) && !is_something_in_the_way(x+2, y)){
+                    x += 2;
+                } else {
+                    excluded_dir.push(dir);
+                    return random_generate_bullets(x, y, excluded_dir);
+                }
+            }
+            break;
+        case 3: //left
+            if (x > 2){
+                if(!is_something_in_the_way(x-1, y) && !is_something_in_the_way(x-2, y)){
+                    x -= 2;
+                    break;
+                } else {
+                    excluded_dir.push(dir);
+                    return random_generate_bullets(x, y, excluded_dir);
+                }
+            }
+            break;
+    }
+    return {x, y, dir};
+}
 
 void Room::random_move_enemies(){
+    DynamicArray<int> excluded_dir;
+    srand(time(NULL));
+    int dir;
     for (Enemy & enemy : enemies){
         auto[x, y] = enemy.get_pos();
-        srand(time(NULL));
         int action = rand() % 10;
         if (action < 3){  //30% probability of shooting
-            //shoot code
+            std::tie(x, y, dir) = random_generate_bullets(x, y, excluded_dir);
+            excluded_dir.reset();
+            bullets.push(Bullet(x, y, dir));
         }
         else{           //70% probability of moving
-            int dir = rand() % 4;
+            dir = rand() % 4;
             switch (dir){
                 case 0: //up
                     if (y > 1){
@@ -166,18 +226,21 @@ void Room::random_move_enemies(){
                             y--;
                         }
                     }
+                    break;
                 case 1: //down
                     if (y < M - 2){
                         if(!is_something_in_the_way(x, y+1)){
                             y++;
                         }
                     }
+                    break;
                 case 2: //right
                     if (x < N - 3){
                         if(!is_something_in_the_way(x+1, y) && !is_something_in_the_way(x+2, y)){
                             x += 2;
                         }
                     }
+                    break;
                 case 3: //left
                     if (x > 2){
                         if(!is_something_in_the_way(x-1, y) && !is_something_in_the_way(x-2, y)){
@@ -185,11 +248,61 @@ void Room::random_move_enemies(){
                             break;
                         }
                     }
+                    break;
             }
             enemy.set_pos(x, y);
         }
     }
 };
+
+void Room::move_bullets(){
+    DynamicArray<Bullet> to_remove;
+    for (Bullet & b : bullets){
+        auto [x,y] = b.get_pos();
+        int back_x = x;
+        int back_y = y;
+        int dir = b.get_dir();
+        switch (dir){
+            case 0: //up
+                if (y > 1){
+                    if(!is_something_in_the_way(x, y-1)){
+                        y--;
+                    }
+                }
+                break;
+            case 1: //down
+                if (y < M - 2){
+                    if(!is_something_in_the_way(x, y+1)){
+                        y++;
+                    }
+                }
+                break;
+            case 2: //right
+                if (x < N - 3){
+                    if(!is_something_in_the_way(x+1, y) && !is_something_in_the_way(x+2, y)){
+                        x += 2;
+                    }
+                }
+                break;
+            case 3: //left
+                if (x > 2){
+                    if(!is_something_in_the_way(x-1, y) && !is_something_in_the_way(x-2, y)){
+                        x -= 2;
+                        break;
+                    }
+                }
+                break;
+            }
+        if (back_x != x || back_y != y){
+            b.set_pos(x,y);
+        } else {
+            to_remove.push(b);
+        }
+    }
+    for (Bullet & b : to_remove){
+        bullets.remove_element(b);
+    }
+}
 
 bool Room::is_something_in_the_way(int x, int y){
     /*

@@ -9,6 +9,7 @@ class Entity{
         Entity(int x, int y);
         std::tuple<int, int> get_pos();
         std::tuple<int, int> set_pos(int x, int y);
+        bool operator!=(Entity rhs);
         int get_x();
         int get_y();
         const char *get_icon();
@@ -45,4 +46,13 @@ class Wall : public Entity{
 class Artifact : public Entity{
     public:
         Artifact(int x, int y);
+};
+
+class Bullet : public Entity{
+    protected:
+        int dir;
+    public:
+        Bullet();
+        Bullet(int x, int y, int dir);
+        int get_dir();
 };

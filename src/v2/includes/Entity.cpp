@@ -9,6 +9,10 @@ Entity::Entity(int x, int y){
     this->y = y;
 };
 
+bool Entity::operator!=(Entity rhs){
+    return this->x != rhs.x && this->y != rhs.y;
+}
+
 std::tuple<int, int> Entity::get_pos(){
     return {this->x, this->y};
 };
@@ -69,3 +73,14 @@ Wall::Wall(int x, int y) : Entity(x, y){
 Artifact::Artifact(int x, int y) : Entity(x, y){
     this->icon = "X";
 };
+
+Bullet::Bullet(){};
+
+Bullet::Bullet(int x, int y, int dir) : Entity(x, y){
+    this->icon = ".";
+    this->dir = dir;
+};
+
+int Bullet::get_dir(){
+    return this->dir;
+}
