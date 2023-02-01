@@ -300,7 +300,7 @@ void Room::move_bullets(){
         }
     }
     for (Bullet & b : to_remove){
-        bullets.remove_element(b);
+        bullets.remove_element(&b);
     }
 }
 

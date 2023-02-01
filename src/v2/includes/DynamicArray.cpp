@@ -6,7 +6,6 @@ DynamicArray<L>::DynamicArray(){
     size = 0;
 };
 
-
 template <class L>
 L DynamicArray<L>::operator[](int i){
     return elements[i];
@@ -35,13 +34,13 @@ void DynamicArray<L>::push(L element){
 };
 
 template <class L>
-void DynamicArray<L>::remove_element(L element){
+void DynamicArray<L>::remove_element(L *element){
     L *tmp = elements;
     elements = new L[--size];
 
     int j = 0;
     for (int i = 0; i < size + 1; i++){
-        if (tmp[i] != element)
+        if (&(tmp[i]) != element)
             elements[j++] = tmp[i];
     }
 
