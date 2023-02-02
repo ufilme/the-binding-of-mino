@@ -1,4 +1,6 @@
 #include "DynamicArray.hpp"
+#include <iostream>
+using namespace std;
 
 template <class L>
 DynamicArray<L>::DynamicArray(){
@@ -29,27 +31,50 @@ void DynamicArray<L>::push(L element){
 
     for (int i = 0; i < size - 1; i++)
         elements[i] = tmp[i];
-
     delete[] tmp;
 };
 
+// template <class L>
+// void DynamicArray<L>::push(L *element){
+//     L *tmp = elements;
+//     elements = new L[++size];
+
+//     elements[size - 1] = *element;
+
+//     for (int i = 0; i < size - 1; i++)
+//         elements[i] = tmp[i];
+//     delete[] tmp;
+// };
+
 template <class L>
-void DynamicArray<L>::remove_element(L *element){
-    L *tmp = elements;
-    elements = new L[--size];
-
-    int j = 0;
-    for (int i = 0; i < size + 1; i++){
-        if (&(tmp[i]) != element)
-            elements[j++] = tmp[i];
+void DynamicArray<L>::remove_element(L element){
+    //cout << "Old size = " << size << endl;
+    if (size <= 1){
+        delete[] elements;
+        elements = NULL;
+        size = 0;
     }
-
-    delete[] tmp;
+    else{
+        L *tmp = elements;
+        elements = new L[--size];
+        //cout << "New size = " << size << endl;
+    
+        int j = 0;
+        for (int i = 0; i < size + 1; i++){
+            //cout << "j = " << j << endl;
+            //cout << "i = " << i << endl;
+            if (tmp[i] != element)
+                elements[j++] = tmp[i];
+        }
+    
+        delete[] tmp;
+    }
 };
 
 template <class L>
 void DynamicArray<L>::reset(){
     delete[] elements;
+    size = 0;
     elements = NULL;
 }
 

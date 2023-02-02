@@ -10,7 +10,8 @@ class DynamicArray{
         L operator[](int i);
         int get_size();
         void push(L element);
-        void remove_element(L *element);
+        void push(L *element);
+        void remove_element(L element);
         void reset();
         L *begin();
         L *end();

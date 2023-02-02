@@ -7,9 +7,9 @@ class Entity{
     public:
         Entity();
         Entity(int x, int y);
+        bool operator!=(Entity rhs);
         std::tuple<int, int> get_pos();
         std::tuple<int, int> set_pos(int x, int y);
-        bool operator!=(Entity rhs);
         int get_x();
         int get_y();
         const char *get_icon();
@@ -54,5 +54,6 @@ class Bullet : public Entity{
     public:
         Bullet();
         Bullet(int x, int y, int dir);
+        bool operator!=(Bullet rhs);
         int get_dir();
 };

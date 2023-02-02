@@ -10,7 +10,7 @@ Entity::Entity(int x, int y){
 };
 
 bool Entity::operator!=(Entity rhs){
-    return this->x != rhs.x && this->y != rhs.y;
+    return this->x != rhs.x || this->y != rhs.y;
 }
 
 std::tuple<int, int> Entity::get_pos(){
@@ -80,6 +80,10 @@ Bullet::Bullet(int x, int y, int dir) : Entity(x, y){
     this->icon = ".";
     this->dir = dir;
 };
+
+bool Bullet::operator!=(Bullet rhs){
+    return Entity::operator!=(rhs) || this->dir != rhs.dir;
+}
 
 int Bullet::get_dir(){
     return this->dir;

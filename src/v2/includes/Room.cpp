@@ -300,8 +300,9 @@ void Room::move_bullets(){
         }
     }
     for (Bullet & b : to_remove){
-        bullets.remove_element(&b);
+        bullets.remove_element(b);
     }
+    to_remove.reset();
 }
 
 bool Room::is_something_in_the_way(int x, int y){

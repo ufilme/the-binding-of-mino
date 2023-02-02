@@ -2,7 +2,6 @@
 
 int main(){
     GameManager TBOM = GameManager();
-
     TBOM.start();
 
     // deallocates memory and ends ncurses
