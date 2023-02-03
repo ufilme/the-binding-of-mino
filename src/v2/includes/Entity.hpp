@@ -27,9 +27,13 @@ class Alive : public Entity{
 };
 
 class Player : public Alive{
+    protected:
+        int direction;          //0 up, 1 down, 2 right, 3 left
     public:
         Player();
         Player(int x, int y);
+        int get_dir();
+        void set_dir(int dir);
 };
 
 class Enemy : public Alive{

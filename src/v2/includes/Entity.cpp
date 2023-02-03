@@ -57,6 +57,15 @@ Player::Player(){};
 
 Player::Player(int x, int y) : Alive(x, y){
     this->icon = "@";
+    this->direction = 0;
+};
+
+int Player::get_dir(){
+    return this->direction;
+};
+
+void Player::set_dir(int dir){
+    this->direction = dir;
 };
 
 Enemy::Enemy(){};

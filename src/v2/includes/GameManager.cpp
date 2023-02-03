@@ -92,11 +92,13 @@ system_clock::duration timed_moving(system_clock::duration start_t, system_clock
 }
 
 void GameManager::update(GameWindow GAME, Room *room){
-    wtimeout(GAME.win, 0);                              //non blocking input
-    auto en_start_t = system_clock::now().time_since_epoch();      //to move enemies
+    wtimeout(GAME.win, 0);                                      //non blocking input
+    auto en_start_t = system_clock::now().time_since_epoch();   //to move enemies
     auto b_start_t = en_start_t;
-    auto en_move_t =  chrono::milliseconds(250);        //enemies moving time
-    auto b_move_t = chrono::milliseconds(100);  // bullets moving time
+    auto last_fired = en_start_t;                               //last bullet shot by P
+    auto en_move_t =  chrono::milliseconds(250);                //enemies moving time
+    auto b_move_t = chrono::milliseconds(100);                  // bullets moving time
+    auto reload_time = chrono::milliseconds(500);               //player reload time
     GAME.draw(room);
     Player P = room->get_player();
     int max_y, max_x;
@@ -112,6 +114,7 @@ void GameManager::update(GameWindow GAME, Room *room){
         switch (this->input){
             case KEY_UP:
             case 65:
+                P.set_dir(0);
                 if (y > 1){
                     if(!room->is_something_in_the_way(x, y-1))
                         y--;                                        //move if cell is free
@@ -129,6 +132,7 @@ void GameManager::update(GameWindow GAME, Room *room){
                 break;
             case KEY_RIGHT:
             case 67:
+                P.set_dir(2);
                 if (x < max_x - 3){
                     if(!room->is_something_in_the_way(x+1, y) && !room->is_something_in_the_way(x+2, y))    
                         x += 2;                                     //move if cell is free
@@ -146,6 +150,7 @@ void GameManager::update(GameWindow GAME, Room *room){
                 break;
             case KEY_DOWN:
             case 66:
+                P.set_dir(1);
                 if (y < max_y - 2){
                     if(!room->is_something_in_the_way(x, y+1))
                         y++;                                        //move if cell is free
@@ -163,6 +168,7 @@ void GameManager::update(GameWindow GAME, Room *room){
                 break;
             case KEY_LEFT:
             case 68:
+                P.set_dir(3);
                 if (x > 2){
                     if(!room->is_something_in_the_way(x-1, y) && !room->is_something_in_the_way(x-2, y))    
                         x -= 2;                                     //move if cell is free
@@ -177,6 +183,14 @@ void GameManager::update(GameWindow GAME, Room *room){
                     P.set_pos(max_x - 2, y);
                     roomchanged = 1;
                 }
+                break;
+            case 120:       //120 = x = shoot
+                if(system_clock::now().time_since_epoch() - last_fired >= reload_time)
+                    room->add_bullet(x, y, P.get_dir());
+                break;
+
+            case 122:       //122 = z = melee attack
+                //melee attack
                 break;
         }
         if (!roomchanged)

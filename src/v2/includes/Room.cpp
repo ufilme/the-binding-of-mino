@@ -358,6 +358,10 @@ void Room::move_bullets(){
     dead_enemies.reset();
 }
 
+void Room::add_bullet(int x, int y, int dir){
+    bullets.push(Bullet(x, y, dir));
+};
+
 bool Room::is_something_in_the_way(int x, int y){
     /*
         for (auto &el : array){

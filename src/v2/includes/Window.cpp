@@ -156,10 +156,10 @@ void MenuWindow::cmd_draw(int pos){
     char info1[] = "Movimento = Frecce";
     int length1 = sizeof(info1) - 1;
 
-    char info2[] = "Attacco di mischia = Z";
+    char info2[] = "Attacco di mischia = z";
     int length2 = sizeof(info2) - 1;
 
-    char info3[] = "Attacco a distanza = X";
+    char info3[] = "Attacco a distanza = x";
     int length3 = sizeof(info3) - 1;
 
     char info4[] = "Esci = Backspace";
