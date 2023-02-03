@@ -257,6 +257,7 @@ void Room::random_move_enemies(){
 
 void Room::move_bullets(){
     DynamicArray<Bullet> to_remove;
+    DynamicArray<Enemy> dead_enemies;
     for (Bullet & b : bullets){
         auto [x,y] = b.get_pos();
         int back_x = x;
@@ -292,17 +293,69 @@ void Room::move_bullets(){
                     }
                 }
                 break;
-            }
+        }
         if (back_x != x || back_y != y){
             b.set_pos(x,y);
         } else {
+            //if hit player decrease life
+            int Px = P.get_x();
+            int Py = P.get_y();
+            switch (dir){
+                case 0:     //up
+                    if (Px == x && Py == y - 1)
+                        P.dec_health();
+                    break;
+                case 1:     //down
+                    if (Px == x && Py == y + 1)
+                        P.dec_health();
+                    break;
+                case 2:     //right
+                    if ((Px == x + 1 || Px == x + 2) && Py == y)
+                        P.dec_health();
+                    break;
+                case 3:     //left
+                    if ((Px == x - 1 || Px == x - 2) && Py == y)
+                        P.dec_health();
+                    break;
+            }
+            //if hit enemy decrease life
+            for (Enemy & e : enemies){
+                int Ex = e.get_x();
+                int Ey = e.get_y();
+                switch (dir){
+                    case 0:     //up
+                        if (Ex == x && Ey == y - 1)
+                            e.dec_health();
+                        break;
+                    case 1:     //down
+                        if (Ex == x && Ey == y + 1)
+                            e.dec_health();
+                        break;
+                    case 2:     //right
+                        if ((Ex == x + 1 || Ex == x + 2) && Ey == y)
+                            e.dec_health();
+                        break;
+                    case 3:     //left
+                        if ((Ex == x - 1 || Ex == x - 2) && Ey == y)
+                            e.dec_health();
+                        break;
+                }
+                if (e.get_health() <= 0)
+                    dead_enemies.push(e);
+            }
             to_remove.push(b);
         }
     }
+    //remove bullets that hit something
     for (Bullet & b : to_remove){
         bullets.remove_element(b);
     }
     to_remove.reset();
+    //remove enemies with 0 health
+    for (Enemy & e : dead_enemies){
+        enemies.remove_element(e);
+    }
+    dead_enemies.reset();
 }
 
 bool Room::is_something_in_the_way(int x, int y){

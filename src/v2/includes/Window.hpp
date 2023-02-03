@@ -35,3 +35,11 @@ class GameWindow : public Window{
         GameWindow(MenuWindow MENU);
         void draw(Room *room);
 };
+
+class GameOverWindow : public Window{
+    protected:
+    public:
+        GameOverWindow();
+        void resize();
+        void draw();
+};

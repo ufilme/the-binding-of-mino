@@ -13,4 +13,5 @@ class GameManager{
         void pre_update(MenuWindow WIN);
         void update(GameWindow WIN, Room *room);
         void commands(MenuWindow MENU);
+        void game_over(GameOverWindow WIN);
 };

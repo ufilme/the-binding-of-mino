@@ -199,3 +199,35 @@ void MenuWindow::resize(){
     int length = sizeof(title) - 1;  // Discount the terminal '\0'
     mvwprintw(win, 0, max_w/2.50 - length/2, title);
 }
+
+GameOverWindow::GameOverWindow() : Window(){};
+
+void GameOverWindow::resize(){
+    int max_h, max_w;
+    getmaxyx(stdscr, max_h, max_w);
+    this->set_max_w(max_w);
+    this->set_max_h(max_h);
+    wclear(win);
+    wrefresh(win);
+    wresize(win, max_h/1.25, max_w/1.25);
+    mvwin(win, max_h/10, max_w/10);
+    box(win, 0, 0);
+    char title[] = "> The Binding of Mino <";
+    int length = sizeof(title) - 1;  // Discount the terminal '\0'
+    mvwprintw(win, 0, max_w/2.50 - length/2, title);
+}
+
+void GameOverWindow::draw(){
+    //chiama metodo draw della classe Window
+    Window::draw();
+
+    //voci del menu
+    char gameover[] = "Game over!";
+    int length = sizeof(gameover) - 1;
+    int x = max_w/2.50, y = (max_h/2.50);
+
+    //evidenzia quella attualmente selezionata
+    wattron(win, A_STANDOUT);
+    mvwprintw(win, y, x - length/2, gameover);
+    wattroff(win, A_STANDOUT);
+}
