@@ -1,8 +1,4 @@
 #include "GameManager.hpp"
-#include <chrono>
-
-using namespace std;
-using chrono::system_clock;
 
 GameManager::GameManager(){};
 
@@ -83,29 +79,21 @@ void GameManager::commands(MenuWindow MENU){
     wrefresh(MENU.win);
 }
 
-system_clock::duration timed_moving(system_clock::duration start_t, system_clock::duration end_t, Room *room, void (Room::*func)()){
-    if (system_clock::now().time_since_epoch() - start_t > end_t){
-        (room->*func)();
-        return system_clock::now().time_since_epoch();
-    }
-    return start_t;
-}
-
 void GameManager::update(GameWindow GAME, Room *room){
     wtimeout(GAME.win, 0);                                      //non blocking input
-    auto en_start_t = system_clock::now().time_since_epoch();   //to move enemies
-    auto b_start_t = en_start_t;
-    auto last_fired = en_start_t;                               //last bullet shot by P
-    auto en_move_t =  chrono::milliseconds(250);                //enemies moving time
-    auto b_move_t = chrono::milliseconds(100);                  // bullets moving time
-    auto reload_time = chrono::milliseconds(500);               //player reload time
+    system_clock::duration en_start_t = system_clock::now().time_since_epoch();   //to move enemies
+    system_clock::duration b_start_t = en_start_t;
+    system_clock::duration last_fired = en_start_t;                               //last bullet shot by P
+    system_clock::duration en_move_t =  chrono::milliseconds(250);                //enemies moving time
+    system_clock::duration b_move_t = chrono::milliseconds(100);                  // bullets moving time
+    system_clock::duration reload_time = chrono::milliseconds(500);               //player reload time
     GAME.draw(room);
     Player P = room->get_player();
     int max_y, max_x;
     bool roomchanged = 0;
     while (this->input != 127 && this->input != KEY_BACKSPACE){
-        en_start_t = timed_moving(en_start_t, en_move_t, room, &Room::random_move_enemies);
-        b_start_t = timed_moving(b_start_t, b_move_t, room, &Room::move_bullets);
+        en_start_t = this->timed_moving(en_start_t, en_move_t, room, &Room::random_move_enemies);
+        b_start_t = this->timed_moving(b_start_t, b_move_t, room, &Room::move_bullets);
         //needed in case a bullet hit the player decreasing his health
         P = room->get_player();
         roomchanged = 0;
@@ -222,4 +210,22 @@ void GameManager::game_over(GameOverWindow WIN){
     */
 
     wgetch(WIN.win);
+}
+
+system_clock::duration GameManager::timed_moving(system_clock::duration start_t, system_clock::duration end_t,
+    Room *room, void (Room::*func)()){
+        if (system_clock::now().time_since_epoch() - start_t > end_t){
+            (room->*func)();
+            return system_clock::now().time_since_epoch();
+        }
+        return start_t;
+}
+
+system_clock::duration GameManager::timed_moving(system_clock::duration start_t, system_clock::duration end_t,
+    Room *room, void (Room::*func)(int, int, int), int x, int y, int dir){
+        if (system_clock::now().time_since_epoch() - start_t > end_t){
+            (room->*func)(x, y, dir);
+            return system_clock::now().time_since_epoch();
+        }
+        return start_t;
 }
