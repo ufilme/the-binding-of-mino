@@ -64,6 +64,12 @@ DynamicArray<Bullet> Room::get_bullets(){
     return bullets;
 }
 
+/*
+DynamicArray<Artifact> Room::get_artifacts(){
+    return artifacts;
+}
+*/
+
 Room *Room::new_room(Room *newroom, int sidebaby){
     switch (sidebaby){   // 0 up 1 right 2 bottom 3 left
         case 0:
@@ -86,6 +92,7 @@ Room *Room::new_room(Room *newroom, int sidebaby){
     newroom->set_player(this->get_player());
     newroom->random_generate_walls();
     newroom->random_generate_enemies();
+    //newroom->random_generate_artifacts();
     return newroom;
 }
 
@@ -151,6 +158,32 @@ void Room::random_generate_enemies(){
         } while (!done);
     }
 };
+
+/*
+void Room::random_generate_artifacts(){
+    int x, y;
+    srand(time(NULL));
+    int n = rand() % 2;     //number of artifacts
+    for (int i = 0; i < n; i++){
+        //artifact's coordinates
+        x = rand() % (N-2) + 1;
+        y = rand() % (M-2) + 1;
+        bool done = true;
+        do  //position artifact on a free cell (no walls, artifacts...)
+        {
+            if(!is_something_in_the_way(x, y)){
+                done = true;
+                artifacts.push(Artifact(x, y));
+            }
+            else{
+                done = false;
+                x = rand() % (N-2) + 1;
+                y = rand() % (M-2) + 1;
+            }
+        } while (!done);
+    }
+};
+*/
 
 std::tuple<int, int, int> Room::random_generate_bullets(int x, int y, DynamicArray<int> excluded_dir){
     int dir = rand() % 4;

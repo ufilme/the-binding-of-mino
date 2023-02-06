@@ -66,7 +66,7 @@ void GameManager::commands(MenuWindow MENU){
     while ((this->input != 127 && this->input != KEY_BACKSPACE) && !back){
         if (this->input == KEY_RESIZE)
             MENU.resize();
-       if (this->input == 10)
+        if (this->input == 10)
             back = true; //se viene usata la voce "Indietro"
         werase(MENU.win);
         MENU.cmd_draw(pos);     //stampa il menu dei comandi
@@ -173,8 +173,11 @@ void GameManager::update(GameWindow GAME, Room *room){
                 }
                 break;
             case 120:       //120 = x = shoot
+                /*
                 if(system_clock::now().time_since_epoch() - last_fired >= reload_time)
                     room->add_bullet(x, y, P.get_dir());
+                */
+                last_fired = this->timed_moving(last_fired, reload_time, room, &Room::add_bullet, x, y, P.get_dir());
                 break;
 
             case 122:       //122 = z = melee attack
@@ -212,18 +215,18 @@ void GameManager::game_over(GameOverWindow WIN){
     wgetch(WIN.win);
 }
 
-system_clock::duration GameManager::timed_moving(system_clock::duration start_t, system_clock::duration end_t,
+system_clock::duration GameManager::timed_moving(system_clock::duration start_t, system_clock::duration delay_t,
     Room *room, void (Room::*func)()){
-        if (system_clock::now().time_since_epoch() - start_t > end_t){
+        if (system_clock::now().time_since_epoch() - start_t > delay_t){
             (room->*func)();
             return system_clock::now().time_since_epoch();
         }
         return start_t;
 }
 
-system_clock::duration GameManager::timed_moving(system_clock::duration start_t, system_clock::duration end_t,
+system_clock::duration GameManager::timed_moving(system_clock::duration start_t, system_clock::duration delay_t,
     Room *room, void (Room::*func)(int, int, int), int x, int y, int dir){
-        if (system_clock::now().time_since_epoch() - start_t > end_t){
+        if (system_clock::now().time_since_epoch() - start_t > delay_t){
             (room->*func)(x, y, dir);
             return system_clock::now().time_since_epoch();
         }

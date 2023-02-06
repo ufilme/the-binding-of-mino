@@ -18,8 +18,8 @@ class GameManager{
         void update(GameWindow WIN, Room *room);
         void commands(MenuWindow MENU);
         void game_over(GameOverWindow WIN);
-        system_clock::duration timed_moving(system_clock::duration start_t, system_clock::duration end_t,
+        system_clock::duration timed_moving(system_clock::duration start_t, system_clock::duration delay_t,
             Room *room, void (Room::*func)());
-        system_clock::duration timed_moving(system_clock::duration start_t, system_clock::duration end_t,
+        system_clock::duration timed_moving(system_clock::duration start_t, system_clock::duration delay_t,
             Room *room, void (Room::*func)(int, int, int), int x, int y, int dir);
 };

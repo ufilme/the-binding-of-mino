@@ -94,6 +94,12 @@ void GameWindow::draw(Room *room){
     for (Bullet & b : bullets){
         mvwprintw(win, b.get_y(), b.get_x(), b.get_icon());
     }
+    /*
+    DynamicArray<Artifact> artifacts = room->get_artifacts();
+    for (Artifact & a : artifacts){
+        mvwprintw(win, a.get_y(), a.get_x(), a.get_icon());
+    }
+    */
 
     //stampa le 4 porte
     int max_y, max_x;
