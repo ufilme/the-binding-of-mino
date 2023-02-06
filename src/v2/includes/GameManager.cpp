@@ -181,7 +181,7 @@ void GameManager::update(GameWindow GAME, Room *room){
                 break;
 
             case 122:       //122 = z = melee attack
-                //melee attack
+                room->melee_attack(x, y);
                 break;
         }
         if (!roomchanged)

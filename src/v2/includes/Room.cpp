@@ -395,6 +395,33 @@ void Room::add_bullet(int x, int y, int dir){
     bullets.push(Bullet(x, y, dir));
 };
 
+void Room::melee_attack(int x, int y){
+    DynamicArray<Enemy> dead_enemies;
+    for (Enemy & e : enemies){
+        int Ex = e.get_x();
+        int Ey = e.get_y();
+
+        int range = 2;
+        int range_sx, range_dx, range_up, range_down;
+        range_sx = x - 2*range;
+        range_dx = x + 2*range;
+        range_up = y - range;
+        range_down = y + range;
+
+        if ((Ex >= range_sx && Ex <= range_dx) && (Ey >= range_up && Ey <= range_down))
+            e.dec_health();
+
+        if (e.get_health() <= 0)
+            dead_enemies.push(e);
+    }
+
+    //remove enemies with 0 health
+    for (Enemy & e : dead_enemies){
+        enemies.remove_element(e);
+    }
+    dead_enemies.reset();
+};
+
 bool Room::is_something_in_the_way(int x, int y){
     /*
         for (auto &el : array){
