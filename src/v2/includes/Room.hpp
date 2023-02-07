@@ -12,7 +12,7 @@ class Room{
         DynamicArray<Entity> playground;
         DynamicArray<Enemy> enemies;
         DynamicArray<Bullet> bullets;
-        //DynamicArray<Artifact> artifacts;
+        DynamicArray<Artifact> artifacts;
     public:
         Room(int N, int M);
         int get_max_x();
@@ -21,7 +21,7 @@ class Room{
         void set_player(Player P);
         void random_generate_walls();
         void random_generate_enemies();
-        //void random_generate_artifacts();
+        void random_generate_artifacts();
         std::tuple<int, int, int> random_generate_bullets(int x, int y, DynamicArray<int> excluded_dir);
         void random_move_enemies();
         void move_bullets();
@@ -42,5 +42,5 @@ class Room{
         DynamicArray<Entity> get_playground();
         DynamicArray<Enemy> get_enemies();
         DynamicArray<Bullet> get_bullets();
-        //DynamicArray<Artifact> get_artifacts();
+        DynamicArray<Artifact> get_artifacts();
 };

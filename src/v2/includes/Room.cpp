@@ -64,11 +64,9 @@ DynamicArray<Bullet> Room::get_bullets(){
     return bullets;
 }
 
-/*
 DynamicArray<Artifact> Room::get_artifacts(){
     return artifacts;
 }
-*/
 
 Room *Room::new_room(Room *newroom, int sidebaby){
     switch (sidebaby){   // 0 up 1 right 2 bottom 3 left
@@ -159,7 +157,6 @@ void Room::random_generate_enemies(){
     }
 };
 
-/*
 void Room::random_generate_artifacts(){
     int x, y;
     srand(time(NULL));
@@ -183,7 +180,6 @@ void Room::random_generate_artifacts(){
         } while (!done);
     }
 };
-*/
 
 std::tuple<int, int, int> Room::random_generate_bullets(int x, int y, DynamicArray<int> excluded_dir){
     int dir = rand() % 4;

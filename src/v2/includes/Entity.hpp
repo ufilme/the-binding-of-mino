@@ -49,6 +49,7 @@ class Wall : public Entity{
 
 class Artifact : public Entity{
     public:
+        Artifact();
         Artifact(int x, int y);
 };
 

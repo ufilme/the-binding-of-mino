@@ -79,6 +79,8 @@ Wall::Wall(int x, int y) : Entity(x, y){
     this->icon = "#";
 };
 
+Artifact::Artifact(){};
+
 Artifact::Artifact(int x, int y) : Entity(x, y){
     this->icon = "X";
 };

@@ -101,5 +101,5 @@ L *DynamicArray<L>::end(){
 template class DynamicArray<Entity>;
 template class DynamicArray<Enemy>;
 template class DynamicArray<Bullet>;
-//template class DynamicArray<Artifact>;
+template class DynamicArray<Artifact>;
 template class DynamicArray<int>;
