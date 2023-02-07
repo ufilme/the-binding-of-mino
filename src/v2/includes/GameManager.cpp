@@ -184,8 +184,14 @@ void GameManager::update(GameWindow GAME, Room *room){
                 room->melee_attack(x, y);
                 break;
         }
-        if (!roomchanged)
+        if (!roomchanged){
             P.set_pos(x, y);
+        }
+        if (room->is_artifact_in_the_way(x, y)){
+            if (P.get_health() < 10){
+                P.inc_health();
+            }
+        }
         room->set_player(P);
         werase(GAME.win);
         GAME.draw(room);

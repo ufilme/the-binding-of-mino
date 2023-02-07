@@ -90,7 +90,7 @@ Room *Room::new_room(Room *newroom, int sidebaby){
     newroom->set_player(this->get_player());
     newroom->random_generate_walls();
     newroom->random_generate_enemies();
-    //newroom->random_generate_artifacts();
+    newroom->random_generate_artifacts();
     return newroom;
 }
 
@@ -168,7 +168,7 @@ void Room::random_generate_artifacts(){
         bool done = true;
         do  //position artifact on a free cell (no walls, artifacts...)
         {
-            if(!is_something_in_the_way(x, y)){
+            if(!is_something_in_the_way(x, y) && !is_something_in_the_way(x + 1, y)){
                 done = true;
                 artifacts.push(Artifact(x, y));
             }
@@ -452,6 +452,17 @@ bool Room::is_enemy_in_the_way(int x, int y){
     }
     return false;
 }
+
+
+bool Room::is_artifact_in_the_way(int x, int y){
+    for (Artifact & a : artifacts){
+        if ((a.get_x() == x || a.get_x() == x - 1) && a.get_y() == y){
+            artifacts.remove_element(a);
+            return true;
+        }
+    }
+    return false;
+};
 
 Player Room::get_player(){
     return P;

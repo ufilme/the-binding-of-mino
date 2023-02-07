@@ -82,7 +82,7 @@ Wall::Wall(int x, int y) : Entity(x, y){
 Artifact::Artifact(){};
 
 Artifact::Artifact(int x, int y) : Entity(x, y){
-    this->icon = "X";
+    this->icon = "XX";
 };
 
 Bullet::Bullet(){};
