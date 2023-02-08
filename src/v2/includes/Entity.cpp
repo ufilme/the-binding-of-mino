@@ -70,10 +70,8 @@ void Player::set_dir(int dir){
     this->direction = dir;
 };
 
-void Player::set_reloading(){
-    if (reloading){
-        reloading = false;
-    }
+void Player::set_reloading(bool f){
+    reloading = f;
 }
 
 bool Player::get_reloading(){

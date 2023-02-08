@@ -36,7 +36,7 @@ class Player : public Alive{
         Player(int x, int y);
         int get_dir();
         void set_dir(int dir);
-        void set_reloading();
+        void set_reloading(bool f);
         bool get_reloading();
         void inc_explosive(int value = 1);
         bool dec_explosive();

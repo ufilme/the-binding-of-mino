@@ -94,11 +94,11 @@ void GameManager::update(GameWindow GAME, Room *room){
     int max_y, max_x;
     bool roomchanged = 0;
     while (this->input != 127 && this->input != KEY_BACKSPACE){
+        P = room->get_player();
         en_start_t = this->timed_moving(en_start_t, en_move_t, room, &Room::random_move_enemies);
         b_start_t = this->timed_moving(b_start_t, b_move_t, room, &Room::move_bullets);
-        last_fired = this->timed_moving(last_fired, reload_time, &P, &Player::set_reloading);
+        last_fired = this->timed_moving(last_fired, reload_time, &P, &Player::set_reloading, false);
         //needed in case a bullet hit the player decreasing his health
-        P = room->get_player();
         roomchanged = 0;
         auto [x, y] = P.get_pos();
         getmaxyx(GAME.win, max_y, max_x);
@@ -182,6 +182,7 @@ void GameManager::update(GameWindow GAME, Room *room){
                 */
                 if (!P.get_reloading()){
                     room->add_bullet(x, y, P.get_dir());
+                    P.set_reloading(true);
                 }
                 // last_fired = this->timed_moving(last_fired, reload_time, room, &Room::add_bullet, x, y, P.get_dir());
                 break;
@@ -251,9 +252,9 @@ system_clock::duration GameManager::timed_moving(system_clock::duration start_t,
 }
 
 system_clock::duration GameManager::timed_moving(system_clock::duration start_t, system_clock::duration delay_t,
-    Player *P, void (Player::*func)()){
+    Player *P, void (Player::*func)(bool), bool f){
         if (system_clock::now().time_since_epoch() - start_t > delay_t){
-            (P->*func)();
+            (P->*func)(f);
             return system_clock::now().time_since_epoch();
         }
         return start_t;
