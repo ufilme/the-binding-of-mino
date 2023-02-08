@@ -29,11 +29,15 @@ class Alive : public Entity{
 class Player : public Alive{
     protected:
         int direction;          //0 up, 1 down, 2 right, 3 left
+        int explosive;
     public:
         Player();
         Player(int x, int y);
         int get_dir();
         void set_dir(int dir);
+        void inc_explosive(int value = 1);
+        bool dec_explosive();
+        int get_explosive();
 };
 
 class Enemy : public Alive{
@@ -48,9 +52,14 @@ class Wall : public Entity{
 };
 
 class Artifact : public Entity{
+    protected:
+        int type;               //0 = life, 1 = explosive
+        int value;
     public:
         Artifact();
-        Artifact(int x, int y);
+        Artifact(int x, int y, int type = 0, int value = 1);
+        int get_type();
+        int get_value();
 };
 
 class Bullet : public Entity{

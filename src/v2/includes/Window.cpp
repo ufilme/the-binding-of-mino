@@ -76,9 +76,11 @@ void GameWindow::draw(Room *room){
     box(win, 0, 0);
     Player P = room->get_player();
     int p_health = P.get_health();
+    int p_explosive = P.get_explosive();
     auto [x,y] = P.get_pos();
     mvwprintw(win, room->get_max_y()-1, 0, "y:%d x:%d", y, x);
-    mvwprintw(win, 0, 1, " Health: %d ", p_health);     //player's health
+    mvwprintw(win, 0, 1, " Health: %d, ", p_health);     //player's health
+    wprintw(win, " Explosive: %d ", p_explosive);              //player's explosive
     mvwprintw(win, y, x, "@");                          //player's icon
 
     //print walls and enemies
@@ -166,25 +168,29 @@ void MenuWindow::cmd_draw(int pos){
     char info3[] = "Attacco a distanza = x";
     int length3 = sizeof(info3) - 1;
 
-    char info4[] = "Esci = Backspace";
+    char info4[] = "Piazza esplosivo = c";
     int length4 = sizeof(info4) - 1;
+
+    char info5[] = "Esci = Backspace";
+    int length5 = sizeof(info5) - 1;
 
     char back[] = "Indietro";
     int length_b = sizeof(back) - 1;
 
-    int x = max_w/2.50, y = (max_h/7.50);
+    int x = max_w/2.50, y = (max_h/8.75);
 
     //stampa a schermo le varie informazioni
     mvwprintw(win, y, x - length1/2, info1);
     mvwprintw(win, 2*y, x - length2/2, info2);
     mvwprintw(win, 3*y, x - length3/2, info3);
     mvwprintw(win, 4*y, x - length4/2, info4);
-    mvwprintw(win, 5*y, x - length_b/2, back);
+    mvwprintw(win, 5*y, x - length5/2, info5);
+    mvwprintw(win, 6*y, x - length_b/2, back);
 
     //evidenzia "Indietro" se selezionato
     wattron(win, A_STANDOUT);
     if (pos == 0){
-        mvwprintw(win, 5*y, x - length_b/2, back);
+        mvwprintw(win, 6*y, x - length_b/2, back);
     }
     wattroff(win, A_STANDOUT);
 }

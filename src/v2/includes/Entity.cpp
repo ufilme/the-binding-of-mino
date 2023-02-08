@@ -38,7 +38,7 @@ const char *Entity::get_icon(){
 Alive::Alive(){};
 
 Alive::Alive(int x, int y) : Entity(x, y){
-    this-> health = 3;
+    this->health = 3;
 };
 
 void Alive::inc_health(int value){
@@ -58,6 +58,7 @@ Player::Player(){};
 Player::Player(int x, int y) : Alive(x, y){
     this->icon = "@";
     this->direction = 0;
+    this->explosive = 0;
 };
 
 int Player::get_dir(){
@@ -66,6 +67,22 @@ int Player::get_dir(){
 
 void Player::set_dir(int dir){
     this->direction = dir;
+};
+
+void Player::inc_explosive(int value){
+    this->explosive += value;
+};
+
+bool Player::dec_explosive(){
+    if (this->explosive > 0){
+        this->explosive--;
+        return true;
+    }
+    return false;
+};
+
+int Player::get_explosive(){
+    return this->explosive;
 };
 
 Enemy::Enemy(){};
@@ -81,8 +98,19 @@ Wall::Wall(int x, int y) : Entity(x, y){
 
 Artifact::Artifact(){};
 
-Artifact::Artifact(int x, int y) : Entity(x, y){
+Artifact::Artifact(int x, int y, int type, int value) : Entity(x, y){
     this->icon = "XX";
+    this->type = type;
+    this->value = value;
+};
+
+
+int Artifact::get_type(){
+    return this->type;
+};
+
+int Artifact::get_value(){
+    return this->value;
 };
 
 Bullet::Bullet(){};

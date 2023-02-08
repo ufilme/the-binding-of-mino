@@ -27,9 +27,10 @@ class Room{
         void move_bullets();
         void add_bullet(int x, int y, int dir);
         void melee_attack(int x, int y);
+        void use_explosive(int x , int y);
         bool is_something_in_the_way(int x, int y);
         bool is_enemy_in_the_way(int x, int y);
-        bool is_artifact_in_the_way(int x, int y);
+        std::tuple<bool, int, int> is_artifact_in_the_way(int x, int y);
         Room *get_top();
         Room *get_right();
         Room *get_bottom();

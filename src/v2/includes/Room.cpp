@@ -134,19 +134,21 @@ void Room::random_generate_walls(){
 };
 
 void Room::random_generate_enemies(){
-    int x, y;
+    int max_health = 3;
+    int x, y, health;
     srand(time(NULL));
     int n = rand() % 4;     //number of enemies
     for (int i = 0; i < n; i++){
         //enemy's coordinates
         x = rand() % (N-2) + 1;
         y = rand() % (M-2) + 1;
+        health = rand() % max_health + 1;
         bool done = true;
         do  //position enemy on a free cell (no walls, artifacts...)
         {
             if(!is_something_in_the_way(x, y)){
                 done = true;
-                enemies.push(Enemy(x, y));
+                enemies.push(Enemy(x, y, health));
             }
             else{
                 done = false;
@@ -160,17 +162,26 @@ void Room::random_generate_enemies(){
 void Room::random_generate_artifacts(){
     int x, y;
     srand(time(NULL));
-    int n = rand() % 2;     //number of artifacts
+    int n = rand() % 3;     //number of artifacts
+    
     for (int i = 0; i < n; i++){
         //artifact's coordinates
         x = rand() % (N-2) + 1;
         y = rand() % (M-2) + 1;
+
+        int type = rand() % 10;
+        if (type < 4)           //40% probability
+            type = 0;           //artifact gives hp
+        else
+            type = 1;           //artifact gives explosive
+        int value = rand() % 2 +1;
+
         bool done = true;
         do  //position artifact on a free cell (no walls, artifacts...)
         {
             if(!is_something_in_the_way(x, y) && !is_something_in_the_way(x + 1, y)){
                 done = true;
-                artifacts.push(Artifact(x, y));
+                artifacts.push(Artifact(x, y, type, value));
             }
             else{
                 done = false;
@@ -393,16 +404,17 @@ void Room::add_bullet(int x, int y, int dir){
 
 void Room::melee_attack(int x, int y){
     DynamicArray<Enemy> dead_enemies;
+
+    int range = 2;
+    int range_sx, range_dx, range_up, range_down;
+    range_sx = x - 2*range;
+    range_dx = x + 2*range;
+    range_up = y - range;
+    range_down = y + range;
+
     for (Enemy & e : enemies){
         int Ex = e.get_x();
         int Ey = e.get_y();
-
-        int range = 2;
-        int range_sx, range_dx, range_up, range_down;
-        range_sx = x - 2*range;
-        range_dx = x + 2*range;
-        range_up = y - range;
-        range_down = y + range;
 
         if ((Ex >= range_sx && Ex <= range_dx) && (Ey >= range_up && Ey <= range_down))
             e.dec_health();
@@ -416,6 +428,33 @@ void Room::melee_attack(int x, int y){
         enemies.remove_element(e);
     }
     dead_enemies.reset();
+};
+
+
+void Room::use_explosive(int x , int y){
+    DynamicArray<Entity> destroyed_walls;
+
+    int range = 2;              //range of explosive
+    int range_sx, range_dx, range_up, range_down;
+    range_sx = x - 2*range;
+    range_dx = x + 2*range;
+    range_up = y - range;
+    range_down = y + range;
+
+    for (Entity & wall : playground){
+        //removes wall in range of explosive
+        int Wx = wall.get_x();
+        int Wy = wall.get_y();
+
+        if ((Wx >= range_sx && Wx <= range_dx) && (Wy >= range_up && Wy <= range_down))
+            destroyed_walls.push(wall);
+    }
+
+    //remove walls hit by explosive
+    for (Entity & wall : destroyed_walls){
+        playground.remove_element(wall);
+    }
+    destroyed_walls.reset();
 };
 
 bool Room::is_something_in_the_way(int x, int y){
@@ -454,14 +493,14 @@ bool Room::is_enemy_in_the_way(int x, int y){
 }
 
 
-bool Room::is_artifact_in_the_way(int x, int y){
+std::tuple<bool, int, int> Room::is_artifact_in_the_way(int x, int y){
     for (Artifact & a : artifacts){
         if ((a.get_x() == x || a.get_x() == x - 1) && a.get_y() == y){
             artifacts.remove_element(a);
-            return true;
+            return {true, a.get_type(), a.get_value()};
         }
     }
-    return false;
+    return {false, -1, -1};
 };
 
 Player Room::get_player(){

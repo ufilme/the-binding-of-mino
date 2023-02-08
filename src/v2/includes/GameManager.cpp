@@ -183,14 +183,25 @@ void GameManager::update(GameWindow GAME, Room *room){
             case 122:       //122 = z = melee attack
                 room->melee_attack(x, y);
                 break;
+            case 99:        //99 = c = use explosive
+                if (P.dec_explosive())
+                    room->use_explosive(x, y);
+                break;
         }
         if (!roomchanged){
             P.set_pos(x, y);
         }
-        if (room->is_artifact_in_the_way(x, y)){
-            if (P.get_health() < 10){
-                P.inc_health();
+        auto[a_in_the_way, type, value] = room->is_artifact_in_the_way(x, y);
+        if (a_in_the_way){
+            if (type == 0){
+                if (P.get_health() <= 10 - value){
+                    P.inc_health(value);
+                }
             }
+            else if (type == 1){
+                P.inc_explosive(value);
+            }
+            
         }
         room->set_player(P);
         werase(GAME.win);
