@@ -30,11 +30,14 @@ class Player : public Alive{
     protected:
         int direction;          //0 up, 1 down, 2 right, 3 left
         int explosive;
+        bool reloading;
     public:
         Player();
         Player(int x, int y);
         int get_dir();
         void set_dir(int dir);
+        void set_reloading();
+        bool get_reloading();
         void inc_explosive(int value = 1);
         bool dec_explosive();
         int get_explosive();

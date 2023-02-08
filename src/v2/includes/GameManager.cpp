@@ -52,11 +52,13 @@ void GameManager::start(){
 }
 
 void GameManager::pre_update(MenuWindow MENU){
+    wtimeout(MENU.win, -1);
     GameWindow GAME = GameWindow(MENU);
     int max_y, max_x;
     getmaxyx(GAME.win, max_y, max_x);
     room = new Room(max_x, max_y);
     this->update(GAME, room);
+    wtimeout(MENU.win, 0);
 };
 
 void GameManager::commands(MenuWindow MENU){
@@ -94,6 +96,7 @@ void GameManager::update(GameWindow GAME, Room *room){
     while (this->input != 127 && this->input != KEY_BACKSPACE){
         en_start_t = this->timed_moving(en_start_t, en_move_t, room, &Room::random_move_enemies);
         b_start_t = this->timed_moving(b_start_t, b_move_t, room, &Room::move_bullets);
+        last_fired = this->timed_moving(last_fired, reload_time, &P, &Player::set_reloading);
         //needed in case a bullet hit the player decreasing his health
         P = room->get_player();
         roomchanged = 0;
@@ -177,7 +180,10 @@ void GameManager::update(GameWindow GAME, Room *room){
                 if(system_clock::now().time_since_epoch() - last_fired >= reload_time)
                     room->add_bullet(x, y, P.get_dir());
                 */
-                last_fired = this->timed_moving(last_fired, reload_time, room, &Room::add_bullet, x, y, P.get_dir());
+                if (!P.get_reloading()){
+                    room->add_bullet(x, y, P.get_dir());
+                }
+                // last_fired = this->timed_moving(last_fired, reload_time, room, &Room::add_bullet, x, y, P.get_dir());
                 break;
 
             case 122:       //122 = z = melee attack
@@ -210,25 +216,28 @@ void GameManager::update(GameWindow GAME, Room *room){
         wrefresh(GAME.win);
         this->input = wgetch(GAME.win);
         if (P.get_health() <= 0){
+            wtimeout(GAME.win, -1);
+            werase(GAME.win);
+            delwin(GAME.win);
             GameOverWindow WIN = GameOverWindow();
             this->game_over(WIN);
+            delwin(WIN.win);
             break;
         }
     }
-    werase(GAME.win);
-    wrefresh(GAME.win);
 }
 
 void GameManager::game_over(GameOverWindow WIN){
     WIN.draw();
-    wtimeout(WIN.win, -1);
 
-    /*
     auto start_t = system_clock::now().time_since_epoch();
     auto wait_t =  chrono::milliseconds(1000);
-    while(system_clock::now().time_since_epoch() - start_t < wait_t){}
-    */
+    while(system_clock::now().time_since_epoch() - start_t < wait_t){
+        wtimeout(WIN.win, 0);
+        wgetch(WIN.win);
+    }
 
+    wtimeout(WIN.win, -1);
     wgetch(WIN.win);
 }
 
@@ -242,9 +251,9 @@ system_clock::duration GameManager::timed_moving(system_clock::duration start_t,
 }
 
 system_clock::duration GameManager::timed_moving(system_clock::duration start_t, system_clock::duration delay_t,
-    Room *room, void (Room::*func)(int, int, int), int x, int y, int dir){
+    Player *P, void (Player::*func)()){
         if (system_clock::now().time_since_epoch() - start_t > delay_t){
-            (room->*func)(x, y, dir);
+            (P->*func)();
             return system_clock::now().time_since_epoch();
         }
         return start_t;

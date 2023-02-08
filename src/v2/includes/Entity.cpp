@@ -59,6 +59,7 @@ Player::Player(int x, int y) : Alive(x, y){
     this->icon = "@";
     this->direction = 0;
     this->explosive = 0;
+    this->reloading = false;
 };
 
 int Player::get_dir(){
@@ -68,6 +69,16 @@ int Player::get_dir(){
 void Player::set_dir(int dir){
     this->direction = dir;
 };
+
+void Player::set_reloading(){
+    if (reloading){
+        reloading = false;
+    }
+}
+
+bool Player::get_reloading(){
+    return reloading;
+}
 
 void Player::inc_explosive(int value){
     this->explosive += value;
@@ -99,7 +110,7 @@ Wall::Wall(int x, int y) : Entity(x, y){
 Artifact::Artifact(){};
 
 Artifact::Artifact(int x, int y, int type, int value) : Entity(x, y){
-    this->icon = "XX";
+    this->icon = "X";
     this->type = type;
     this->value = value;
 };
