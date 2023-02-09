@@ -5,6 +5,8 @@
 using std::chrono::system_clock;
 
 Window::Window(){
+    int max_h, max_w;
+
     // sets up memory and clears the screen
     initscr();
     // avoid keyboard input to be written on screen
@@ -12,7 +14,6 @@ Window::Window(){
     refresh();
     curs_set(0);
 
-    int max_h, max_w;
     getmaxyx(stdscr, max_h, max_w);
     this->offset_h = (max_h - max_h/1.25)/2;
     this->offset_w = (max_w - max_w/1.25)/2;
@@ -61,17 +62,17 @@ int Window::set_offset_h(int h){
 }
 
 void Window::draw(){
-    box(win, 0, 0);
-
     char title[] = "> The Binding of Mino <";
     int length = sizeof(title) - 1; 
+
+    box(win, 0, 0);
     mvwprintw(win, 0, max_w/2.50 - length/2, title);
 }
 
 void Window::screenTooSmall(int max_w, int max_h){
+    int x = max_w/2.50, y = (max_h/2.50);
     char gameover[] = "Terminal screen is too small!";
     int length = sizeof(gameover) - 1;
-    int x = max_w/2.50, y = (max_h/2.50);
 
     //evidenzia quella attualmente selezionata
     wattron(win, A_STANDOUT);
@@ -88,27 +89,10 @@ IntroWindow::IntroWindow(){
 };
 
 void IntroWindow::draw(){
-    Window::draw();
-    // const wchar_t *logo[] = 
-    //     {L"▄▄▄█████▓ ██░ ██ ▓█████     ▄▄▄▄    ██▓ ███▄    █   ▄████  ██▓ ███▄    █   ▄████",
-    //     L"▓  ██▒ ▓▒▓██░ ██▒▓█   ▀    ▓█████▄ ▓██▒ ██ ▀█   █  ██▒ ▀█▒▓██▒ ██ ▀█   █  ██▒ ▀█▒",
-    //     L"▒ ▓██░ ▒░▒██▀▀██░▒███      ▒██▒ ▄██▒██▒▓██  ▀█ ██▒▒██░▄▄▄░▒██▒▓██  ▀█ ██▒▒██░▄▄▄░",
-    //     L"░ ▓██▓ ░ ░▓█ ░██ ▒▓█  ▄    ▒██░█▀  ░██░▓██▒  ▐▌██▒░▓█  ██▓░██░▓██▒  ▐▌██▒░▓█  ██▓",
-    //     L"  ▒██▒ ░ ░▓█▒░██▓░▒████▒   ░▓█  ▀█▓░██░▒██░   ▓██░░▒▓███▀▒░██░▒██░   ▓██░░▒▓███▀▒",
-    //     L"  ▒ ░░    ▒ ░░▒░▒░░ ▒░ ░   ░▒▓███▀▒░▓  ░ ▒░   ▒ ▒  ░▒   ▒ ░▓  ░ ▒░   ▒ ▒  ░▒   ▒ ",
-    //     L"    ░     ▒ ░▒░ ░ ░ ░  ░   ▒░▒   ░  ▒ ░░ ░░   ░ ▒░  ░   ░  ▒ ░░ ░░   ░ ▒░  ░   ░ ",
-    //     L"  ░       ░  ░░ ░   ░       ░    ░  ▒ ░   ░   ░ ░ ░ ░   ░  ▒ ░   ░   ░ ░ ░ ░   ░ ",
-    //     L"          ░  ░  ░   ░  ░    ░       ░           ░       ░  ░           ░       ░ ",
-    //     L"                                 ░                                               ",
-    //     L"             ▒█████    █████▒    ███▄ ▄███▓ ██▓ ███▄    █  ▒█████                ",
-    //     L"            ▒██▒  ██▒▓██   ▒    ▓██▒▀█▀ ██▒▓██▒ ██ ▀█   █ ▒██▒  ██▒              ",
-    //     L"            ▒██░  ██▒▒████ ░    ▓██    ▓██░▒██▒▓██  ▀█ ██▒▒██░  ██▒              ",
-    //     L"            ▒██   ██░░▓█▒  ░    ▒██    ▒██ ░██░▓██▒  ▐▌██▒▒██   ██░              ",
-    //     L"            ░ ████▓▒░░▒█░       ▒██▒   ░██▒░██░▒██░   ▓██░░ ████▓▒░              ",
-    //     L"            ░ ▒░▒░▒░  ▒ ░       ░ ▒░   ░  ░░▓  ░ ▒░   ▒ ▒ ░ ▒░▒░▒░               ",
-    //     L"              ░ ▒ ▒░  ░         ░  ░      ░ ▒ ░░ ░░   ░ ▒░  ░ ▒ ▒░               ",
-    //     L"            ░ ░ ░ ▒   ░ ░       ░      ░    ▒ ░   ░   ░ ░ ░ ░ ░ ▒                ",
-    //     L"                ░ ░                    ░    ░           ░     ░ ░                "};
+    system_clock::duration start_t;
+    system_clock::duration wait_t = std::chrono::milliseconds(100);
+    char footer[] = "Press any key to continue";
+    int length = sizeof(footer) - 1;
     const wchar_t *logo[] ={
         L"████████╗██╗  ██╗███████╗    ██████╗ ██╗███╗   ██╗██████╗ ██╗███╗   ██╗ ██████╗ ",
         L"╚══██╔══╝██║  ██║██╔════╝    ██╔══██╗██║████╗  ██║██╔══██╗██║████╗  ██║██╔════╝ ",
@@ -123,21 +107,20 @@ void IntroWindow::draw(){
         L"             ██║   ██║██╔══╝      ██║╚██╔╝██║██║██║╚██╗██║██║   ██║             ",
         L"             ╚██████╔╝██║         ██║ ╚═╝ ██║██║██║ ╚████║╚██████╔╝             ",
         L"              ╚═════╝ ╚═╝         ╚═╝     ╚═╝╚═╝╚═╝  ╚═══╝ ╚═════╝              "};
+    int rows = sizeof(logo) / sizeof(logo[0]);
+
+    Window::draw();
     getmaxyx(stdscr, max_h, max_w);
     this->set_max_w(max_w);
     this->set_max_h(max_h);
-    int rows = sizeof(logo) / sizeof(logo[0]);
     for (int i = 0; i < rows; i++){
         mvwprintw(win, (max_h/2)-(12-i), (max_w/2.5)-40, "%ls", logo[i]);
-        auto start_t = system_clock::now().time_since_epoch();
-        auto wait_t =  std::chrono::milliseconds(100);
+        start_t = system_clock::now().time_since_epoch();
         while(system_clock::now().time_since_epoch() - start_t < wait_t){
             wtimeout(win, 0);
             wgetch(win);
         }
     }
-    char footer[] = "Press any key to continue";
-    int length = sizeof(footer) - 1;
     mvwaddstr(win, (max_h/2.50)+10, (max_w/2.5)-length/2, footer);
 }
 
@@ -146,11 +129,13 @@ GameWindow::GameWindow() : Window(){
 }
 
 void GameWindow::draw(Room *room){
-    box(win, 0, 0);
+    int x, y, max_x, max_y;
     Player P = room->get_player();
     int p_health = P.get_health();
     int p_explosive = P.get_explosive();
-    auto [x,y] = P.get_pos();
+    std::tie(x,y) = P.get_pos();
+
+    box(win, 0, 0);
     mvwprintw(win, room->get_max_y()-1, 0, "y:%d x:%d", y, x);
     mvwprintw(win, 0, 1, " Health: %d, ", p_health);     //player's health
     wprintw(win, " Explosive: %d ", p_explosive);              //player's explosive
@@ -175,7 +160,6 @@ void GameWindow::draw(Room *room){
     }
 
     //stampa le 4 porte
-    int max_y, max_x;
     getmaxyx(win, max_y, max_x);
 
     mvwprintw(win, max_y/2 - 1, 0, " ");            //porta sx
@@ -192,22 +176,18 @@ void GameWindow::draw(Room *room){
 MenuWindow::MenuWindow() : Window(){};
 
 void MenuWindow::draw(int pos){
-    werase(win);
-    //chiama metodo draw della classe Window
-    Window::draw();
-
+    int x = max_w/2.50, y = (max_h/5.00);
     //voci del menu
     char choice1[] = "Gioca";
     int length1 = sizeof(choice1) - 1;
-
     char choice2[] = "Comandi";
     int length2 = sizeof(choice2) - 1;
-
     char choice3[] = "Esci";
     int length3 = sizeof(choice3) - 1;
 
-    int x = max_w/2.50, y = (max_h/5.00);
-
+    werase(win);
+    //chiama metodo draw della classe Window
+    Window::draw();
     //stampa a schermo le varie opzioni
     mvwprintw(win, y, x - length1/2, choice1);
     mvwprintw(win, 2*y, x - length2/2, choice2);
@@ -231,30 +211,23 @@ void MenuWindow::draw(int pos){
 }
 
 void MenuWindow::cmd_draw(int pos){
-    werase(win);
-    Window::draw();
-
+    int x = max_w/2.50, y = (max_h/8.75);
     //voci del menu
     char info1[] = "Movimento = Frecce";
     int length1 = sizeof(info1) - 1;
-
     char info2[] = "Attacco di mischia = z";
     int length2 = sizeof(info2) - 1;
-
     char info3[] = "Attacco a distanza = x";
     int length3 = sizeof(info3) - 1;
-
     char info4[] = "Piazza esplosivo = c";
     int length4 = sizeof(info4) - 1;
-
     char info5[] = "Esci = Backspace";
     int length5 = sizeof(info5) - 1;
-
     char back[] = "Indietro";
     int length_b = sizeof(back) - 1;
-
-    int x = max_w/2.50, y = (max_h/8.75);
-
+    
+    werase(win);
+    Window::draw();
     //stampa a schermo le varie informazioni
     mvwprintw(win, y, x - length1/2, info1);
     mvwprintw(win, 2*y, x - length2/2, info2);
@@ -274,6 +247,9 @@ void MenuWindow::cmd_draw(int pos){
 
 void MenuWindow::resize(){
     int max_h, max_w;
+    char title[] = "> The Binding of Mino <";
+    int length = sizeof(title) - 1;  // Discount the terminal '\0'
+
     getmaxyx(stdscr, max_h, max_w);
     this->set_max_w(max_w);
     this->set_max_h(max_h);
@@ -282,8 +258,6 @@ void MenuWindow::resize(){
     wresize(win, max_h/1.25, max_w/1.25);
     mvwin(win, max_h/10, max_w/10);
     box(win, 0, 0);
-    char title[] = "> The Binding of Mino <";
-    int length = sizeof(title) - 1;  // Discount the terminal '\0'
     mvwprintw(win, 0, max_w/2.50 - length/2, title);
 }
 
@@ -291,6 +265,9 @@ GameOverWindow::GameOverWindow() : Window(){};
 
 void GameOverWindow::resize(){
     int max_h, max_w;
+    char title[] = "> The Binding of Mino <";
+    int length = sizeof(title) - 1;  // Discount the terminal '\0'
+
     getmaxyx(stdscr, max_h, max_w);
     this->set_max_w(max_w);
     this->set_max_h(max_h);
@@ -299,20 +276,17 @@ void GameOverWindow::resize(){
     wresize(win, max_h/1.25, max_w/1.25);
     mvwin(win, max_h/10, max_w/10);
     box(win, 0, 0);
-    char title[] = "> The Binding of Mino <";
-    int length = sizeof(title) - 1;  // Discount the terminal '\0'
     mvwprintw(win, 0, max_w/2.50 - length/2, title);
 }
 
 void GameOverWindow::draw(){
-    //chiama metodo draw della classe Window
-    Window::draw();
-
+    int x = max_w/2.50, y = (max_h/2.50);
     //voci del menu
     char gameover[] = "Game over!";
     int length = sizeof(gameover) - 1;
-    int x = max_w/2.50, y = (max_h/2.50);
 
+    //chiama metodo draw della classe Window
+    Window::draw();
     //evidenzia quella attualmente selezionata
     wattron(win, A_STANDOUT);
     mvwprintw(win, y, x - length/2, gameover);

@@ -16,9 +16,9 @@ class GameManager{
         void start();
         void menu();
         void pre_update();
-        void update(GameWindow WIN, Room *room);
+        void update();
         void commands(MenuWindow MENU);
-        void game_over(GameOverWindow WIN);
+        void game_over();
         bool checkTerminalSize(Window WIN);
         system_clock::duration timed_moving(system_clock::duration start_t, system_clock::duration delay_t,
             Room *room, void (Room::*func)());

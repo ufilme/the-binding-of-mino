@@ -18,10 +18,15 @@ int DynamicArray<L>::get_size(){
     return size;
 }
 
-// Create a tmp copy of the array pointer 
-// Expand the array with the size + 1
-// Copy each element from the tmp to the new array
-
+/**
+ * @brief Add an element to the data structure
+ * Create a tmp copy of the array pointer
+ * Expand the array with the size + 1 
+ * Copy each element from the tmp to the new array
+ * 
+ * @tparam L type of element
+ * @param element element to add to the data structure
+ */
 template <class L>
 void DynamicArray<L>::push(L element){
     L *tmp = elements;
@@ -34,9 +39,18 @@ void DynamicArray<L>::push(L element){
     delete[] tmp;
 };
 
+/**
+ * @brief Remove an element from the data structure
+ * Create a tmp copy of the array pointer
+ * Compact the array with the size - 1 
+ * Copy each element from the tmp to the new array
+ * excluding the element to remove
+ *  
+ * @tparam L type of element
+ * @param element element to remove
+ */
 template <class L>
 void DynamicArray<L>::remove_element(L element){
-    //cout << "Old size = " << size << endl;
     if (size <= 1){
         delete[] elements;
         elements = NULL;
@@ -45,12 +59,9 @@ void DynamicArray<L>::remove_element(L element){
     else{
         L *tmp = elements;
         elements = new L[--size];
-        //cout << "New size = " << size << endl;
     
         int j = 0;
         for (int i = 0; i < size + 1; i++){
-            //cout << "j = " << j << endl;
-            //cout << "i = " << i << endl;
             if (tmp[i] != element)
                 elements[j++] = tmp[i];
         }
@@ -78,14 +89,16 @@ L *DynamicArray<L>::end(){
     return elements + size;
 };
 
-// It's necessary to initialize the template
-// This cause we have a header file, so when the compiler
-// use the template to create the class for a specific type
-// it can't find the defined methods in the cpp file.
-// Another alternative is to add an include in the header
-// to this file, but since we use the template only for
-// two types we can just initiazile them here 
-
+/**
+ * @brief It's necessary to initialize the template
+ * This cause we have a header file, so when the compiler
+ * use the template to create the class for a specific type
+ * it can't find the defined methods in the cpp file.
+ * Another alternative is to add an include in the header
+ * to this file, but since we use the template only a few
+ * types we can just initiazile them here 
+ * 
+*/
 template class DynamicArray<Entity>;
 template class DynamicArray<Enemy>;
 template class DynamicArray<Bullet>;

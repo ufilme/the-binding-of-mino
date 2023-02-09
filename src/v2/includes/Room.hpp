@@ -1,6 +1,10 @@
 #include "DynamicArray.hpp"
 #include <tuple>
 
+/**
+ * @brief Implements the game world
+ * Each room is connected to at most other 4 rooms
+ */
 class Room{
     protected:
         int N, M;       //N colonne, M righe

@@ -1,5 +1,11 @@
 #include "Entity.hpp"
 
+/**
+ * @brief Implementation of the Data Structure
+ * Define an array with variable size
+ * 
+ * @tparam the type of data stored in the array
+*/
 template <class L>
 class DynamicArray{
     protected:

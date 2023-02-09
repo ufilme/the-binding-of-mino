@@ -71,7 +71,7 @@ void GameManager::menu(){
                     switch (pos){
                         case 0:
                             this->input = 0;
-                            this->pre_update();
+                            this->update();
                             break;
                         case 1:
                             this->commands(MENU);
@@ -127,34 +127,34 @@ void GameManager::commands(MenuWindow MENU){
  * Initialize game window
  */
 void GameManager::pre_update(){
-    int max_y, max_x;
-
-    GameWindow GAME = GameWindow();
-    getmaxyx(GAME.win, max_y, max_x);
-    room = new Room(max_x, max_y);
-
-    this->update(GAME, room);
+    
 };
 
 /**
  * @brief Main GameManager function. Handles Player's movements, room's change
  * and Entities' delays
- * 
- * @param GAME 
- * @param room 
  */
-void GameManager::update(GameWindow GAME, Room *room){
-    wtimeout(GAME.win, 0);                                      //non blocking input
+void GameManager::update(){
+    Player P;
+    GameWindow GAME;
+    Room *room;
+    int max_y, max_x;
     system_clock::duration en_start_t = system_clock::now().time_since_epoch();   //to move enemies
     system_clock::duration b_start_t = en_start_t;
     system_clock::duration last_fired = en_start_t;                               //last bullet shot by P
     system_clock::duration en_move_t =  chrono::milliseconds(250);                //enemies moving time
     system_clock::duration b_move_t = chrono::milliseconds(100);                  // bullets moving time
     system_clock::duration reload_time = chrono::milliseconds(500);               //player reload time
-    GAME.draw(room);
-    Player P = room->get_player();
-    int max_y, max_x;
     bool roomchanged = 0;
+
+    GAME = GameWindow();
+    getmaxyx(GAME.win, max_y, max_x);
+    room = new Room(max_x, max_y);
+    P = room->get_player();
+
+    wtimeout(GAME.win, 0);                                      //non blocking input
+    GAME.draw(room);
+
     while (this->input != 127 && this->input != KEY_BACKSPACE){
         P = room->get_player();
         en_start_t = this->timed_moving(en_start_t, en_move_t, room, &Room::random_move_enemies);
@@ -279,18 +279,18 @@ void GameManager::update(GameWindow GAME, Room *room){
         wrefresh(GAME.win);
         this->input = wgetch(GAME.win);
         if (P.get_health() <= 0){
-            wtimeout(GAME.win, -1);
-            werase(GAME.win);
-            delwin(GAME.win);
-            GameOverWindow WIN = GameOverWindow();
-            this->game_over(WIN);
-            delwin(WIN.win);
+            GAME._delete();
+            this->game_over();
             break;
         }
     }
 }
 
-void GameManager::game_over(GameOverWindow WIN){
+/**
+ * Handles end screen
+ */
+void GameManager::game_over(){
+    GameOverWindow WIN = GameOverWindow();
     WIN.draw();
 
     auto start_t = system_clock::now().time_since_epoch();
@@ -302,8 +302,17 @@ void GameManager::game_over(GameOverWindow WIN){
 
     wtimeout(WIN.win, -1);
     wgetch(WIN.win);
+    WIN._delete();
 }
 
+/**
+ * @brief Check if terminal window has a valid size
+ * Draws a dialog if too small
+ * 
+ * @param WIN window where to check the size
+ * @return true if valid size
+ * @return false if not valid size
+ */
 bool GameManager::checkTerminalSize(Window WIN){
     if (WIN.get_max_w() < 110 || WIN.get_max_h() < 45){
         WIN.screenTooSmall(WIN.get_max_w(), WIN.get_max_h());
@@ -312,6 +321,16 @@ bool GameManager::checkTerminalSize(Window WIN){
     return true;
 }
 
+/**
+ * Handles the movement of enemies and bullets
+ * 
+ * @param start_t initial time
+ * @param delay_t time to wait
+ * @param room object's pointer which calls the function
+ * @param func method's address of the object
+ * @return system_clock::now().time_since_epoch() if function is called
+ * @return system_clock::duration if function is not called
+ */
 system_clock::duration GameManager::timed_moving(system_clock::duration start_t, system_clock::duration delay_t,
     Room *room, void (Room::*func)()){
         if (system_clock::now().time_since_epoch() - start_t > delay_t){
@@ -321,6 +340,17 @@ system_clock::duration GameManager::timed_moving(system_clock::duration start_t,
         return start_t;
 }
 
+/**
+ * Handles Player reload time
+ * 
+ * @param start_t initial time
+ * @param delay_t time to wait
+ * @param P object's pointer which calls the function
+ * @param func method's address of the object
+ * @param f true or false based on what to set
+ * @return system_clock::now().time_since_epoch() if function is called
+ * @return system_clock::duration if function is not called
+ */
 system_clock::duration GameManager::timed_moving(system_clock::duration start_t, system_clock::duration delay_t,
     Player *P, void (Player::*func)(bool), bool f){
         if (system_clock::now().time_since_epoch() - start_t > delay_t){

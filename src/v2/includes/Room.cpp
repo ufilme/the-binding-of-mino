@@ -68,6 +68,15 @@ DynamicArray<Artifact> Room::get_artifacts(){
     return artifacts;
 }
 
+/**
+ * @brief Handles the creation of a new room
+ * Connects the room's pointer based on which entrance in chosen
+ * Calls the generation methods
+ * 
+ * @param newroom new empty room
+ * @param sidebaby which side the player has entered
+ * @return Room* pointer to the new room created
+ */
 Room *Room::new_room(Room *newroom, int sidebaby){
     switch (sidebaby){   // 0 up 1 right 2 bottom 3 left
         case 0:
@@ -94,10 +103,14 @@ Room *Room::new_room(Room *newroom, int sidebaby){
     return newroom;
 }
 
+/**
+ * Generate random walls in a room
+ */
 void Room::random_generate_walls(){
-    int x, y, way, span;
     srand(time(NULL));
+    int x, y, way, span;
     int n = rand() % 10 + 2;
+
     for (int i = 0; i < n; i++){
         x = rand() % (N-2) + 1;
         y = rand() % (M-2) + 1;
@@ -112,45 +125,48 @@ void Room::random_generate_walls(){
         }
         for (int h = 0; h < span; h++){
             switch (way){
-            case 0:
-                if (y - h < 1) break;
-                playground.push(Wall(x, y - h));
-                break;
-            case 1:
-                if (y + h >= M - 1) break;
-                playground.push(Wall(x, y + h));
-                break;
-            case 2:
-                if (x + h >= N- 1) break;
-                playground.push(Wall(x + h, y));
-                break;
-            case 3:
-                if (x - h < 1) break;
-                playground.push(Wall(x - h, y));
-                break;
+                case 0:
+                    if (y - h < 1) break;
+                    playground.push(Wall(x, y - h));
+                    break;
+                case 1:
+                    if (y + h >= M - 1) break;
+                    playground.push(Wall(x, y + h));
+                    break;
+                case 2:
+                    if (x + h >= N- 1) break;
+                    playground.push(Wall(x + h, y));
+                    break;
+                case 3:
+                    if (x - h < 1) break;
+                    playground.push(Wall(x - h, y));
+                    break;
             }
         }   
     }
 };
 
+/**
+ * Generate random enemies in a room
+ */
 void Room::random_generate_enemies(){
-    int max_health = 3;
-    int x, y, health;
     srand(time(NULL));
+    int x, y, health;
+    int max_health = 3;
     int n = rand() % 4;     //number of enemies
+    bool done = true;
+
     for (int i = 0; i < n; i++){
         //enemy's coordinates
         x = rand() % (N-2) + 1;
         y = rand() % (M-2) + 1;
         health = rand() % max_health + 1;
-        bool done = true;
-        do  //position enemy on a free cell (no walls, artifacts...)
-        {
+        //position enemy on a free cell (no walls, artifacts...)
+        do{
             if(!is_something_in_the_way(x, y)){
                 done = true;
                 enemies.push(Enemy(x, y, health));
-            }
-            else{
+            } else{
                 done = false;
                 x = rand() % (N-2) + 1;
                 y = rand() % (M-2) + 1;
@@ -159,31 +175,32 @@ void Room::random_generate_enemies(){
     }
 };
 
+/**
+ * Generate random artifacts in a room
+ */
 void Room::random_generate_artifacts(){
-    int x, y;
     srand(time(NULL));
+    int x, y, type, value;
     int n = rand() % 3;     //number of artifacts
+    bool done = true;
     
     for (int i = 0; i < n; i++){
         //artifact's coordinates
         x = rand() % (N-2) + 1;
         y = rand() % (M-2) + 1;
 
-        int type = rand() % 10;
+        type = rand() % 10;
         if (type < 4)           //40% probability
             type = 0;           //artifact gives hp
         else
             type = 1;           //artifact gives explosive
-        int value = rand() % 2 +1;
-
-        bool done = true;
-        do  //position artifact on a free cell (no walls, artifacts...)
-        {
+        value = rand() % 2 +1;
+        //position artifact on a free cell (no walls, artifacts...)
+        do{
             if(!is_something_in_the_way(x, y) && !is_something_in_the_way(x + 1, y)){
                 done = true;
                 artifacts.push(Artifact(x, y, type, value));
-            }
-            else{
+            } else{
                 done = false;
                 x = rand() % (N-2) + 1;
                 y = rand() % (M-2) + 1;
@@ -192,11 +209,20 @@ void Room::random_generate_artifacts(){
     }
 };
 
+/**
+ * Generate bullets checking if the shooting direction is valid
+ * 
+ * @param x entity x coord
+ * @param y entity y coord
+ * @param excluded_dir direction that are not valid
+ * @return std::tuple<int, int, int> tuple with x, y coords and direction
+ */
 std::tuple<int, int, int> Room::random_generate_bullets(int x, int y, DynamicArray<int> excluded_dir){
-    if (sizeof(excluded_dir) / sizeof(int) == 4){
+    int dir;
+    if (excluded_dir.get_size() == 4){
         return {x, y, -1};
     }
-    int dir = rand() % 4;
+    dir = rand() % 4;
     for (int el : excluded_dir){
         if (dir == el){
             return random_generate_bullets(x, y, excluded_dir);
@@ -248,13 +274,16 @@ std::tuple<int, int, int> Room::random_generate_bullets(int x, int y, DynamicArr
     return {x, y, dir};
 }
 
+/**
+ * Moves enemies or let the shoot based on random probability
+ */
 void Room::random_move_enemies(){
-    DynamicArray<int> excluded_dir;
     srand(time(NULL));
-    int dir;
+    DynamicArray<int> excluded_dir;
+    int x, y, dir, action;
     for (Enemy & enemy : enemies){
-        auto[x, y] = enemy.get_pos();
-        int action = rand() % 10;
+        std::tie(x, y) = enemy.get_pos();
+        action = rand() % 10;
         if (action < 3){  //30% probability of shooting
             std::tie(x, y, dir) = random_generate_bullets(x, y, excluded_dir);
             excluded_dir.reset();
@@ -299,14 +328,19 @@ void Room::random_move_enemies(){
     }
 };
 
+/**
+ * Move bullets, check hits and remove dead bullets
+ */
 void Room::move_bullets(){
     DynamicArray<Bullet> to_remove;
     DynamicArray<Enemy> dead_enemies;
+    int x, y, dir, back_x, back_y;
+    int Px, Py, Ex, Ey;
     for (Bullet & b : bullets){
-        auto [x,y] = b.get_pos();
-        int back_x = x;
-        int back_y = y;
-        int dir = b.get_dir();
+        std::tie(x,y) = b.get_pos();
+        back_x = x;
+        back_y = y;
+        dir = b.get_dir();
         switch (dir){
             case 0: //up
                 if (y > 1){
@@ -342,8 +376,8 @@ void Room::move_bullets(){
             b.set_pos(x,y);
         } else {
             //if hit player decrease life
-            int Px = P.get_x();
-            int Py = P.get_y();
+            Px = P.get_x();
+            Py = P.get_y();
             switch (dir){
                 case 0:     //up
                     if (Px == x && Py == y - 1)
@@ -364,8 +398,8 @@ void Room::move_bullets(){
             }
             //if hit enemy decrease life
             for (Enemy & e : enemies){
-                int Ex = e.get_x();
-                int Ey = e.get_y();
+                Ex = e.get_x();
+                Ey = e.get_y();
                 switch (dir){
                     case 0:     //up
                         if (Ex == x && Ey == y - 1)
@@ -406,19 +440,26 @@ void Room::add_bullet(int x, int y, int dir){
     bullets.push(Bullet(x, y, dir));
 };
 
+/**
+ * Handles Player melee attacks on enemies
+ * 
+ * @param x player x coord
+ * @param y player y coord
+ */
 void Room::melee_attack(int x, int y){
     DynamicArray<Enemy> dead_enemies;
-
-    int range = 2;
     int range_sx, range_dx, range_up, range_down;
+    int Ex, Ey;
+    int range = 2;
+
     range_sx = x - 2*range;
     range_dx = x + 2*range;
     range_up = y - range;
     range_down = y + range;
 
     for (Enemy & e : enemies){
-        int Ex = e.get_x();
-        int Ey = e.get_y();
+        Ex = e.get_x();
+        Ey = e.get_y();
 
         if ((Ex >= range_sx && Ex <= range_dx) && (Ey >= range_up && Ey <= range_down))
             e.dec_health();
@@ -434,12 +475,18 @@ void Room::melee_attack(int x, int y){
     dead_enemies.reset();
 };
 
-
+/**
+ * Handles Player explosive attacks on enemies
+ * 
+ * @param x player x coord
+ * @param y player y coord
+ */
 void Room::use_explosive(int x , int y){
     DynamicArray<Entity> destroyed_walls;
-
-    int range = 2;              //range of explosive
     int range_sx, range_dx, range_up, range_down;
+    int Wx, Wy;
+    int range = 2;              //range of explosive
+
     range_sx = x - 2*range;
     range_dx = x + 2*range;
     range_up = y - range;
@@ -447,8 +494,8 @@ void Room::use_explosive(int x , int y){
 
     for (Entity & wall : playground){
         //removes wall in range of explosive
-        int Wx = wall.get_x();
-        int Wy = wall.get_y();
+        Wx = wall.get_x();
+        Wy = wall.get_y();
 
         if ((Wx >= range_sx && Wx <= range_dx) && (Wy >= range_up && Wy <= range_down))
             destroyed_walls.push(wall);
@@ -461,6 +508,26 @@ void Room::use_explosive(int x , int y){
     destroyed_walls.reset();
 };
 
+/**
+ * @brief Check if walls, enemies or player are in x,y coords
+ * for (auto &el : array){
+ *      el is a reference to an item of array
+ *      We can change array's items by changing el
+ * }
+ * for (auto el : array){
+ *      Value of el is copied from an item of array
+ *      We can not change array's items by changing el
+ * }
+ * On each loop, el is set as a reference to playground[n], 
+ * with n equaling the current loop count starting from 0. 
+ * So, el is playground[0] on the first round, on the second it's playground[1], 
+ * and so on. It retrieves the value via iteration.
+ * 
+ * @param x x coord
+ * @param y y coord
+ * @return true if coords are occupied
+ * @return false if coords are not occupied
+ */
 bool Room::is_something_in_the_way(int x, int y){
     /*
         for (auto &el : array){
@@ -489,6 +556,14 @@ bool Room::is_something_in_the_way(int x, int y){
     return false;
 }
 
+/**
+ * Check if enemy is in x,y coords
+ * 
+ * @param x x coord
+ * @param y y coord
+ * @return true if enemy is in x,y coords
+ * @return false if enemey is not in x,y coords
+ */
 bool Room::is_enemy_in_the_way(int x, int y){
     for (Enemy & el : enemies){
         if (el.get_x() == x && el.get_y() == y) return true;
@@ -496,7 +571,14 @@ bool Room::is_enemy_in_the_way(int x, int y){
     return false;
 }
 
-
+/**
+ * Check if artifact is in x,y coords
+ * 
+ * @param x x coord
+ * @param y y coord
+ * @return true if artifact is in x,y coords
+ * @return false if artifact is not in x,y coords
+ */
 std::tuple<bool, int, int> Room::is_artifact_in_the_way(int x, int y){
     for (Artifact & a : artifacts){
         if ((a.get_x() == x || a.get_x() == x - 1) && a.get_y() == y){

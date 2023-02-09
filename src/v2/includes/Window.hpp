@@ -1,6 +1,9 @@
 #include <ncurses.h>
 #include "Room.hpp"
 
+/**
+ * Implements graphics
+ */
 class Window{
     protected:
         int max_w, max_h;
