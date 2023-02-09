@@ -1,4 +1,8 @@
 #include "Window.hpp"
+#include <string>
+#include <chrono>
+
+using std::chrono::system_clock;
 
 Window::Window(){
     // sets up memory and clears the screen
@@ -64,11 +68,66 @@ void Window::draw(){
     mvwprintw(win, 0, max_w/2.50 - length/2, title);
 }
 
+void Window::screenTooSmall(int max_w, int max_h){
+    char gameover[] = "Terminal screen is too small!";
+    int length = sizeof(gameover) - 1;
+    int x = max_w/2.50, y = (max_h/2.50);
+
+    //evidenzia quella attualmente selezionata
+    wattron(win, A_STANDOUT);
+    mvwprintw(win, y, x - length/2, gameover);
+    wattroff(win, A_STANDOUT);
+}
+
 void Window::_delete(){
     delwin(win);
 }
 
-GameWindow::GameWindow(MenuWindow MENU) : Window(){
+IntroWindow::IntroWindow(){
+    Window();
+};
+
+void IntroWindow::draw(){
+    Window::draw();
+    const wchar_t *logo[] = 
+        {L"▄▄▄█████▓ ██░ ██ ▓█████     ▄▄▄▄    ██▓ ███▄    █   ▄████  ██▓ ███▄    █   ▄████",
+        L"▓  ██▒ ▓▒▓██░ ██▒▓█   ▀    ▓█████▄ ▓██▒ ██ ▀█   █  ██▒ ▀█▒▓██▒ ██ ▀█   █  ██▒ ▀█▒",
+        L"▒ ▓██░ ▒░▒██▀▀██░▒███      ▒██▒ ▄██▒██▒▓██  ▀█ ██▒▒██░▄▄▄░▒██▒▓██  ▀█ ██▒▒██░▄▄▄░",
+        L"░ ▓██▓ ░ ░▓█ ░██ ▒▓█  ▄    ▒██░█▀  ░██░▓██▒  ▐▌██▒░▓█  ██▓░██░▓██▒  ▐▌██▒░▓█  ██▓",
+        L"  ▒██▒ ░ ░▓█▒░██▓░▒████▒   ░▓█  ▀█▓░██░▒██░   ▓██░░▒▓███▀▒░██░▒██░   ▓██░░▒▓███▀▒",
+        L"  ▒ ░░    ▒ ░░▒░▒░░ ▒░ ░   ░▒▓███▀▒░▓  ░ ▒░   ▒ ▒  ░▒   ▒ ░▓  ░ ▒░   ▒ ▒  ░▒   ▒ ",
+        L"    ░     ▒ ░▒░ ░ ░ ░  ░   ▒░▒   ░  ▒ ░░ ░░   ░ ▒░  ░   ░  ▒ ░░ ░░   ░ ▒░  ░   ░ ",
+        L"  ░       ░  ░░ ░   ░       ░    ░  ▒ ░   ░   ░ ░ ░ ░   ░  ▒ ░   ░   ░ ░ ░ ░   ░ ",
+        L"          ░  ░  ░   ░  ░    ░       ░           ░       ░  ░           ░       ░ ",
+        L"                                 ░                                               ",
+        L"             ▒█████    █████▒    ███▄ ▄███▓ ██▓ ███▄    █  ▒█████                ",
+        L"            ▒██▒  ██▒▓██   ▒    ▓██▒▀█▀ ██▒▓██▒ ██ ▀█   █ ▒██▒  ██▒              ",
+        L"            ▒██░  ██▒▒████ ░    ▓██    ▓██░▒██▒▓██  ▀█ ██▒▒██░  ██▒              ",
+        L"            ▒██   ██░░▓█▒  ░    ▒██    ▒██ ░██░▓██▒  ▐▌██▒▒██   ██░              ",
+        L"            ░ ████▓▒░░▒█░       ▒██▒   ░██▒░██░▒██░   ▓██░░ ████▓▒░              ",
+        L"            ░ ▒░▒░▒░  ▒ ░       ░ ▒░   ░  ░░▓  ░ ▒░   ▒ ▒ ░ ▒░▒░▒░               ",
+        L"              ░ ▒ ▒░  ░         ░  ░      ░ ▒ ░░ ░░   ░ ▒░  ░ ▒ ▒░               ",
+        L"            ░ ░ ░ ▒   ░ ░       ░      ░    ▒ ░   ░   ░ ░ ░ ░ ░ ▒                ",
+        L"                ░ ░                    ░    ░           ░     ░ ░                "};
+    getmaxyx(stdscr, max_h, max_w);
+    this->set_max_w(max_w);
+    this->set_max_h(max_h);
+    int rows = sizeof(logo) / sizeof(logo[0]);
+    for (int i = 0; i < rows; i++){
+        mvwprintw(win, (max_h/2)-(18-i), (max_w/2.5)-40, "%ls", logo[i]);
+        auto start_t = system_clock::now().time_since_epoch();
+        auto wait_t =  std::chrono::milliseconds(100);
+        while(system_clock::now().time_since_epoch() - start_t < wait_t){
+            wtimeout(win, 0);
+            wgetch(win);
+        }
+    }
+    char footer[] = "Press any key to continue";
+    int length = sizeof(footer) - 1;
+    mvwaddstr(win, (max_h/2.50)+10, (max_w/2.5)-length/2, footer);
+}
+
+GameWindow::GameWindow() : Window(){
     Window();       //chiama costruttore classe madre, poi reinizializza win
 }
 
@@ -119,6 +178,7 @@ void GameWindow::draw(Room *room){
 MenuWindow::MenuWindow() : Window(){};
 
 void MenuWindow::draw(int pos){
+    werase(win);
     //chiama metodo draw della classe Window
     Window::draw();
 
@@ -153,9 +213,11 @@ void MenuWindow::draw(int pos){
             break;
     }
     wattroff(win, A_STANDOUT);
+    wrefresh(win);
 }
 
 void MenuWindow::cmd_draw(int pos){
+    werase(win);
     Window::draw();
 
     //voci del menu
@@ -193,6 +255,7 @@ void MenuWindow::cmd_draw(int pos){
         mvwprintw(win, 6*y, x - length_b/2, back);
     }
     wattroff(win, A_STANDOUT);
+    wrefresh(win);
 }
 
 void MenuWindow::resize(){

@@ -34,18 +34,6 @@ void DynamicArray<L>::push(L element){
     delete[] tmp;
 };
 
-// template <class L>
-// void DynamicArray<L>::push(L *element){
-//     L *tmp = elements;
-//     elements = new L[++size];
-
-//     elements[size - 1] = *element;
-
-//     for (int i = 0; i < size - 1; i++)
-//         elements[i] = tmp[i];
-//     delete[] tmp;
-// };
-
 template <class L>
 void DynamicArray<L>::remove_element(L element){
     //cout << "Old size = " << size << endl;

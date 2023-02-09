@@ -18,6 +18,14 @@ class Window{
         int set_offset_h(int h);
         int get_offset_w();
         int get_offset_h();
+        void screenTooSmall(int w, int h);
+};
+
+class IntroWindow : public Window{
+    protected:
+    public:
+        IntroWindow();
+        void draw();
 };
 
 class MenuWindow : public Window{
@@ -32,7 +40,7 @@ class MenuWindow : public Window{
 class GameWindow : public Window{
     protected:
     public:
-        GameWindow(MenuWindow MENU);
+        GameWindow();
         void draw(Room *room);
 };
 

@@ -1,86 +1,148 @@
 #include "GameManager.hpp"
+#include <locale.h>
 
-GameManager::GameManager(){};
+GameManager::GameManager(){
+    setlocale(LC_ALL, "");
+};
 
-void GameManager::intro(){};
-
+/**
+ * On game start check if terminal window has a valid size
+ */
 void GameManager::start(){
-    MenuWindow MENU = MenuWindow();
-    bool exit = false;
+    Window TEST = Window();
+
+    if (checkTerminalSize(TEST)){
+        this->intro();
+    } else {
+        wtimeout(TEST.win, -1);
+        wgetch(TEST.win);
+        endwin();
+    }
+}
+
+/**
+ * Show logo animation
+ */
+void GameManager::intro(){
+    IntroWindow WIN = IntroWindow();
+
+    WIN.draw();
+    wtimeout(WIN.win, -1);
+    wgetch(WIN.win);
+    WIN._delete();
+
+    this->menu();
+};
+
+/**
+ * @brief Handles menu interactions
+ * The menu is resizable, avoiding restarting the game if the initial terminal
+ * size is too small. So terminal size is checked and a dialog is displayed if
+ * it's not valid.
+ */
+void GameManager::menu(){
     int pos = 0;
+    bool exit = false;
+    bool tooSmall = false;
+
+    MenuWindow MENU = MenuWindow();
     while ((this->input != 127 && this->input != KEY_BACKSPACE) && !exit){
-        if (this->input == KEY_RESIZE)
+        if (this->input == KEY_RESIZE){
+            tooSmall = false;
             MENU.resize();
-        switch (this->input){
-            case KEY_UP:
-            case 65:
-                if (pos == -1)
-                    pos = 0;
-                else if (pos != 0)
-                    pos--;
-                break;
-            case KEY_DOWN:
-            case 66:
-                if (pos == -1)
-                    pos = 0;
-                else if (pos != 2)
-                    pos++;
-                break;
-            case 10:
-                switch (pos){
-                    case 0:
-                        this->input = 0;
-                        this->pre_update(MENU);
-                        MENU.resize();
-                        break;
-                    case 1:
-                        this->commands(MENU);
-                        MENU.resize();
-                        break;
-                    case 2:
-                        exit = true;
-                        break;
-                }
-                break;
+            tooSmall = !checkTerminalSize(MENU);
+        } else {
+            switch (this->input){
+                case KEY_UP:
+                case 65:
+                    if (pos == -1)
+                        pos = 0;
+                    else if (pos != 0)
+                        pos--;
+                    break;
+                case KEY_DOWN:
+                case 66:
+                    if (pos == -1)
+                        pos = 0;
+                    else if (pos != 2)
+                        pos++;
+                    break;
+                case 10:
+                    switch (pos){
+                        case 0:
+                            this->input = 0;
+                            this->pre_update();
+                            break;
+                        case 1:
+                            this->commands(MENU);
+                            tooSmall = false;
+                            MENU.resize();
+                            tooSmall = !checkTerminalSize(MENU);
+                            break;
+                        case 2:
+                            exit = true;
+                            break;
+                    }
+                    break;
+            }
         }
-        // sovrascrivi metodo draw nel menuWindow e poi fai disegnare qua
-        MENU.draw(pos);
-        mvwprintw(MENU.win, 0, 0, "%d %d", pos, this->input);
+        if (!tooSmall){
+            MENU.draw(pos);
+            mvwprintw(MENU.win, 0, 0, "%d %d", pos, this->input);
+        }
         if (!exit)
             this->input = wgetch(MENU.win);
     }
+    // deallocates memory and ends ncurses
+    endwin();
 }
 
-void GameManager::pre_update(MenuWindow MENU){
-    wtimeout(MENU.win, -1);
-    GameWindow GAME = GameWindow(MENU);
-    int max_y, max_x;
-    getmaxyx(GAME.win, max_y, max_x);
-    room = new Room(max_x, max_y);
-    this->update(GAME, room);
-    wtimeout(MENU.win, 0);
-};
-
+/**
+ * Handles commands description in the menu
+ * 
+ * @param MENU the menu window
+ */
 void GameManager::commands(MenuWindow MENU){
-    bool back = false;
     int pos = 0;
+    bool back = false;
+    bool tooSmall = false;
+    
     this->input = 0;
     while ((this->input != 127 && this->input != KEY_BACKSPACE) && !back){
-        if (this->input == KEY_RESIZE)
+        if (this->input == KEY_RESIZE){
             MENU.resize();
+            tooSmall = !checkTerminalSize(MENU);
+        }
         if (this->input == 10)
             back = true; //se viene usata la voce "Indietro"
-        werase(MENU.win);
-        MENU.cmd_draw(pos);     //stampa il menu dei comandi
-        mvwprintw(MENU.win, 0, 0, "%d %d", pos, this->input);
-        wrefresh(MENU.win);
+        if (!tooSmall){
+            MENU.cmd_draw(pos);     //stampa il menu dei comandi
+        }
         if (!back)
             this->input = wgetch(MENU.win);
     }
-    werase(MENU.win);
-    wrefresh(MENU.win);
 }
 
+/**
+ * Initialize game window
+ */
+void GameManager::pre_update(){
+    int max_y, max_x;
+
+    GameWindow GAME = GameWindow();
+    getmaxyx(GAME.win, max_y, max_x);
+    room = new Room(max_x, max_y);
+
+    this->update(GAME, room);
+};
+
+/**
+ * @brief Main GameManager function. Handles Player's movements, room's change
+ * and Entities' delays
+ * 
+ * @param GAME 
+ * @param room 
+ */
 void GameManager::update(GameWindow GAME, Room *room){
     wtimeout(GAME.win, 0);                                      //non blocking input
     system_clock::duration en_start_t = system_clock::now().time_since_epoch();   //to move enemies
@@ -240,6 +302,14 @@ void GameManager::game_over(GameOverWindow WIN){
 
     wtimeout(WIN.win, -1);
     wgetch(WIN.win);
+}
+
+bool GameManager::checkTerminalSize(Window WIN){
+    if (WIN.get_max_w() < 110 || WIN.get_max_h() < 45){
+        WIN.screenTooSmall(WIN.get_max_w(), WIN.get_max_h());
+        return false;
+    }
+    return true;
 }
 
 system_clock::duration GameManager::timed_moving(system_clock::duration start_t, system_clock::duration delay_t,

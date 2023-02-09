@@ -193,6 +193,9 @@ void Room::random_generate_artifacts(){
 };
 
 std::tuple<int, int, int> Room::random_generate_bullets(int x, int y, DynamicArray<int> excluded_dir){
+    if (sizeof(excluded_dir) / sizeof(int) == 4){
+        return {x, y, -1};
+    }
     int dir = rand() % 4;
     for (int el : excluded_dir){
         if (dir == el){
@@ -255,7 +258,8 @@ void Room::random_move_enemies(){
         if (action < 3){  //30% probability of shooting
             std::tie(x, y, dir) = random_generate_bullets(x, y, excluded_dir);
             excluded_dir.reset();
-            bullets.push(Bullet(x, y, dir));
+            if (dir != -1)
+                bullets.push(Bullet(x, y, dir));
         }
         else{           //70% probability of moving
             dir = rand() % 4;
