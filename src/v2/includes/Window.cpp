@@ -143,6 +143,7 @@ void GameWindow::draw(Room *room){
     int p_explosive = P.get_explosive();
     std::tie(x,y) = P.get_pos();
 
+    werase(win);
     box(win, 0, 0);
     mvwprintw(win, room->get_max_y()-1, 0, "y:%d x:%d", y, x);
     mvwprintw(win, 0, 1, " Health: %d, ", p_health);     //player's health
@@ -179,6 +180,7 @@ void GameWindow::draw(Room *room){
     mvwprintw(win, 0, max_x/2 - 2, "    ");         //porta up
 
     mvwprintw(win, max_y - 1, max_x/2 - 2, "    "); //porta down
+    wrefresh(win);
 }
 
 MenuWindow::MenuWindow() : Window(){};

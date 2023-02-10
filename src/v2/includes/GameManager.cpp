@@ -273,10 +273,7 @@ void GameManager::update(){
             
         }
         room->set_player(P);
-        werase(GAME.win);
         GAME.draw(room);
-        mvwprintw(GAME.win, 0, GAME.get_max_w()/1.25 - 3, "%d", this->input);
-        wrefresh(GAME.win);
         this->input = wgetch(GAME.win);
         if (P.get_health() <= 0){
             GAME._delete();

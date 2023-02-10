@@ -126,19 +126,19 @@ void Room::random_generate_walls(){
         for (int h = 0; h < span; h++){
             switch (way){
                 case 0:
-                    if (y - h < 1) break;
+                    if (y - h < 1 or is_something_in_the_way(x, y-h)) break;
                     playground.push(Wall(x, y - h));
                     break;
                 case 1:
-                    if (y + h >= M - 1) break;
+                    if (y + h >= M - 1 or is_something_in_the_way(x, y+h)) break;
                     playground.push(Wall(x, y + h));
                     break;
                 case 2:
-                    if (x + h >= N- 1) break;
+                    if (x + h >= N- 1 or is_something_in_the_way(x+h, y)) break;
                     playground.push(Wall(x + h, y));
                     break;
                 case 3:
-                    if (x - h < 1) break;
+                    if (x - h < 1 or is_something_in_the_way(x-h, y)) break;
                     playground.push(Wall(x - h, y));
                     break;
             }
