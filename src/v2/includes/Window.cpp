@@ -145,7 +145,7 @@ void GameWindow::draw(Room *room){
 
     werase(win);
     box(win, 0, 0);
-    mvwprintw(win, room->get_max_y()-1, 0, "y:%d x:%d", y, x);
+    //mvwprintw(win, room->get_max_y()-1, 0, "y:%d x:%d", y, x);
     mvwprintw(win, 0, 1, " Health: %d, ", p_health);     //player's health
     wprintw(win, " Explosive: %d ", p_explosive);              //player's explosive
     mvwprintw(win, y, x, "@");                          //player's icon

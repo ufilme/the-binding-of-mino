@@ -1,0 +1,12 @@
+=====================================> The Binding of Mino <=============================================
+                Programming class project, Alma Mater Studiorum - Università di Bologna.
+
+Written in C++, meant to be compiled with the gcc/make toolchain. 
+Uses the ncurses library.
+
+How to run the game:
+1. Make sure to have installed the mandatory ncurses dev headers (if you're using a Linux distro,
+   the package providing them is probably called "ncurses-devel" or alike, refer to your package manager and distro documentation)
+2. compile the program using 'make' (although it's possible to compile without the make tool, it's STRONGLY 
+   recommended to do so)
+3. run the game with the command './main'

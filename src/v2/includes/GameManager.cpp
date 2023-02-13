@@ -88,7 +88,7 @@ void GameManager::menu(){
         }
         if (!tooSmall){
             MENU.draw(pos);
-            mvwprintw(MENU.win, 0, 0, "%d %d", pos, this->input);
+            //mvwprintw(MENU.win, 0, 0, "%d %d", pos, this->input);
         }
         if (!exit)
             this->input = wgetch(MENU.win);
@@ -159,8 +159,9 @@ void GameManager::update(){
         P = room->get_player();
         en_start_t = this->timed_moving(en_start_t, en_move_t, room, &Room::random_move_enemies);
         b_start_t = this->timed_moving(b_start_t, b_move_t, room, &Room::move_bullets);
-        last_fired = this->timed_moving(last_fired, reload_time, &P, &Player::set_reloading, false);
         //needed in case a bullet hit the player decreasing his health
+        P = room->get_player();
+        last_fired = this->timed_moving(last_fired, reload_time, &P, &Player::set_reloading, false);
         roomchanged = 0;
         auto [x, y] = P.get_pos();
         getmaxyx(GAME.win, max_y, max_x);
