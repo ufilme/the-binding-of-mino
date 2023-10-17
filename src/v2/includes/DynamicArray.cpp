@@ -52,9 +52,7 @@ void DynamicArray<L>::push(L element){
 template <class L>
 void DynamicArray<L>::remove_element(L element){
     if (size <= 1){
-        delete[] elements;
-        elements = NULL;
-        size = 0;
+        this->reset();
     }
     else{
         L *tmp = elements;

@@ -88,7 +88,6 @@ void GameManager::menu(){
         }
         if (!tooSmall){
             MENU.draw(pos);
-            //mvwprintw(MENU.win, 0, 0, "%d %d", pos, this->input);
         }
         if (!exit)
             this->input = wgetch(MENU.win);
@@ -122,13 +121,6 @@ void GameManager::commands(MenuWindow MENU){
             this->input = wgetch(MENU.win);
     }
 }
-
-/**
- * Initialize game window
- */
-void GameManager::pre_update(){
-    
-};
 
 /**
  * @brief Main GameManager function. Handles Player's movements, room's change

@@ -15,7 +15,6 @@ class GameManager{
         void intro();
         void start();
         void menu();
-        void pre_update();
         void update();
         void commands(MenuWindow MENU);
         void game_over();
